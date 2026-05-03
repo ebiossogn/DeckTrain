@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String?
+  password    String
+  role        String    @default("JUNIOR_ADMIN")
+  permissions String?
+  isBlocked   Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model AppUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  type      String   @default("participant")
+  isActive  Boolean  @default(true)
+  moduleIds String?
+  createdAt DateTime @default(now())
+}
+
+model LoginLog {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String
+  success   Boolean
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+model Module {
+  id          String          @id @default(cuid())
+  title       String
+  description String?
+  order       Int
+  slides      Slide[]
+  exercises   Exercise[]
+  sessions    AgendaSession[]
+  resources   Resource[]
+  createdAt   DateTime        @default(now())
+}
+
+model Slide {
+  id           String   @id @default(cuid())
+  moduleId     String
+  module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  type         String
+  order        Int
+  content      String
+  speakerNotes String?
+  timerMinutes Int?
+  transition   String?
+  createdAt    DateTime @default(now())
+}
+
+model Exercise {
+  id         String   @id @default(cuid())
+  moduleId   String
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  type       String
+  title      String
+  content    String
+  difficulty String
+  solution   String?
+  order      Int
+  createdAt  DateTime @default(now())
+}
+
+model AgendaSession {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   @default("formation")
+  startDate   DateTime
+  endDate     DateTime
+  startTime   String?
+  endTime     String?
+  description String?
+  location    String?
+  status      String   @default("planifie")
+  color       String?
+  moduleId    String?
+  module      Module?  @relation(fields: [moduleId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String
+  url         String
+  moduleId    String?
+  module      Module?  @relation(fields: [moduleId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Survey {
+  id          String           @id @default(cuid())
+  title       String
+  description String?
+  code        String           @unique
+  isActive    Boolean          @default(true)
+  isLive      Boolean          @default(false)
+  questions   SurveyQuestion[]
+  createdAt   DateTime         @default(now())
+}
+
+model SurveyQuestion {
+  id        String           @id @default(cuid())
+  surveyId  String
+  survey    Survey           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  type      String
+  order     Int
+  title     String
+  options   String?
+  multiple  Boolean          @default(false)
+  responses SurveyResponse[]
+  createdAt DateTime         @default(now())
+}
+
+model SurveyResponse {
+  id         String         @id @default(cuid())
+  questionId String
+  question   SurveyQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value      String
+  respondent String?
+  createdAt  DateTime       @default(now())
+}
+
+model AppSettings {
+  id               String  @id @default("singleton")
+  solutionsVisible Boolean @default(false)
+  accentColor      String  @default("#00D4FF")
+  trainingTitle    String  @default("Formation Tech")
+  trainingSubtitle String  @default("Mai 2026")
+  trainerName      String  @default("CHRIST J.")
+}
