@@ -3,20 +3,17 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
-
-const PWD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/
+import { validateBody } from '@/lib/api-validator'
+import { changePasswordSchema } from '@/lib/validations'
 
 export async function PATCH(req: Request) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-  const { password } = await req.json()
-
-  if (!password || !PWD_REGEX.test(password)) {
-    return NextResponse.json({
-      error: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.',
-    }, { status: 400 })
-  }
+  const body = await req.json()
+  const v = validateBody(changePasswordSchema, body)
+  if ('error' in v) return v.error
+  const { password } = v.data
 
   const hash = await bcrypt.hash(password, 12)
   const { userType, role } = session.user

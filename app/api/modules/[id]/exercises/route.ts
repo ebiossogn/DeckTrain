@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
+import { validateBody } from '@/lib/api-validator'
+import { createExerciseSchema } from '@/lib/validations'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const exercises = await prisma.exercise.findMany({
@@ -19,8 +21,10 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
   if (err) return err
-  const { title, type, content, difficulty, solution } = await req.json()
-  if (!title?.trim()) return NextResponse.json({ error: 'Titre requis' }, { status: 400 })
+  const body = await req.json()
+  const v = validateBody(createExerciseSchema, body)
+  if ('error' in v) return v.error
+  const { title, type, content, difficulty, solution } = v.data
   const max = await prisma.exercise.aggregate({
     where: { moduleId: params.id },
     _max: { order: true },
@@ -28,10 +32,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const exercise = await prisma.exercise.create({
     data: {
       moduleId: params.id,
-      title: title.trim(),
-      type: type || 'qcm',
+      title,
+      type,
       content: JSON.stringify(content || {}),
-      difficulty: difficulty || 'facile',
+      difficulty,
       solution: solution?.trim() || null,
       order: (max._max.order ?? 0) + 1,
     },

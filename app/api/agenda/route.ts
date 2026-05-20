@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
+import { validateBody } from '@/lib/api-validator'
+import { createAgendaSchema } from '@/lib/validations'
 
 export async function GET() {
   const sessions = await prisma.agendaSession.findMany({
@@ -20,12 +22,13 @@ export async function GET() {
 export async function POST(req: Request) {
   const err = await assertAuth()
   if (err) return err
-  const { title, type, startDate, endDate, startTime, endTime, description, location, status, color, moduleId } = await req.json()
-  if (!title?.trim()) return NextResponse.json({ error: 'Titre requis' }, { status: 400 })
-  if (!startDate || !endDate) return NextResponse.json({ error: 'Dates requises' }, { status: 400 })
+  const body = await req.json()
+  const v = validateBody(createAgendaSchema, body)
+  if ('error' in v) return v.error
+  const { title, type, startDate, endDate, startTime, endTime, description, location, status, color, moduleId } = v.data
   const session = await prisma.agendaSession.create({
     data: {
-      title: title.trim(),
+      title,
       type: type || 'formation',
       startDate: new Date(startDate + 'T00:00:00.000Z'),
       endDate: new Date(endDate + 'T00:00:00.000Z'),
@@ -34,7 +37,7 @@ export async function POST(req: Request) {
       description: description?.trim() || null,
       location: location?.trim() || null,
       status: status || 'planifie',
-      color: color?.trim() || null,
+      color: (color?.trim() || null) as string | null,
       moduleId: moduleId || null,
     },
     include: { module: { select: { id: true, title: true } } },

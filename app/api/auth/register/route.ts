@@ -3,31 +3,14 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { sendVerificationEmail } from '@/lib/mailer'
+import { validateBody } from '@/lib/api-validator'
+import { registerSchema } from '@/lib/validations'
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { name, email, password, _honey } = body as {
-    name: string
-    email: string
-    password: string
-    _honey: string
-  }
-
-  // Honeypot: les bots remplissent ce champ caché
-  if (_honey) {
-    return NextResponse.json({ error: 'Requête invalide' }, { status: 400 })
-  }
-
-  // Validations basiques
-  if (!name?.trim() || !email?.trim() || !password) {
-    return NextResponse.json({ error: 'Tous les champs sont obligatoires' }, { status: 400 })
-  }
-  if (password.length < 8) {
-    return NextResponse.json({ error: 'Le mot de passe doit contenir au moins 8 caractères' }, { status: 400 })
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: 'Adresse email invalide' }, { status: 400 })
-  }
+  const v = validateBody(registerSchema, body)
+  if ('error' in v) return v.error
+  const { name, email, password } = v.data
 
   // Vérifier si l'email existe déjà
   const existing = await prisma.appUser.findUnique({ where: { email: email.toLowerCase() } })

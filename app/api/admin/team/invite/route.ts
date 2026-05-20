@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { validateBody } from '@/lib/api-validator'
+import { inviteAdminSchema } from '@/lib/validations'
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$'
@@ -14,8 +16,10 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   if (session.user.role !== 'SUPER_ADMIN') return NextResponse.json({ error: 'Réservé au Super Admin' }, { status: 403 })
 
-  const { email, name, role, permissions } = await req.json()
-  if (!email || !role) return NextResponse.json({ error: 'Email et rôle requis' }, { status: 400 })
+  const body = await req.json()
+  const v = validateBody(inviteAdminSchema, body)
+  if ('error' in v) return v.error
+  const { email, name, role, permissions } = v.data
 
   const existing = await prisma.user.findUnique({ where: { email } })
   if (existing) return NextResponse.json({ error: 'Cet email est déjà utilisé' }, { status: 409 })

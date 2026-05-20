@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
 import { generateSurveyCode } from '@/lib/survey-utils'
+import { validateBody } from '@/lib/api-validator'
+import { createSurveySchema } from '@/lib/validations'
 
 export async function GET() {
   const err = await assertAuth()
@@ -26,8 +28,10 @@ export async function POST(req: Request) {
   const err = await assertAuth()
   if (err) return err
 
-  const { title, description, questions } = await req.json()
-  if (!title) return NextResponse.json({ error: 'Titre requis' }, { status: 400 })
+  const body = await req.json()
+  const v = validateBody(createSurveySchema, body)
+  if ('error' in v) return v.error
+  const { title, description, questions } = v.data
 
   /* Génère un code unique */
   let code = generateSurveyCode()
@@ -45,7 +49,7 @@ export async function POST(req: Request) {
       description: description ?? null,
       code,
       questions: {
-        create: (questions ?? []).map((q: { type: string; title: string; options?: string; multiple?: boolean }, i: number) => ({
+        create: questions.map((q, i) => ({
           type: q.type,
           order: i,
           title: q.title,

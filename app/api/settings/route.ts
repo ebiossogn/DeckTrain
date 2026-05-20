@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
+import { validateBody } from '@/lib/api-validator'
+import { updateSettingsSchema } from '@/lib/validations'
 
 export async function GET() {
   const settings = await prisma.appSettings.findUnique({ where: { id: 'singleton' } })
@@ -15,7 +17,10 @@ export async function PATCH(req: Request) {
   const err = await assertAuth()
   if (err) return err
 
-  const { solutionsVisible, accentColor, trainingTitle, trainingSubtitle, trainerName } = await req.json()
+  const body = await req.json()
+  const v = validateBody(updateSettingsSchema, body)
+  if ('error' in v) return v.error
+  const { solutionsVisible, accentColor, trainingTitle, trainingSubtitle, trainerName } = v.data
 
   const settings = await prisma.appSettings.upsert({
     where: { id: 'singleton' },
