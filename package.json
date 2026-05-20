@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
+    "db:push:dev": "prisma db push --schema=prisma/schema.dev.prisma",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate"
@@ -35,6 +36,7 @@
     "next-auth": "^4.24.7",
     "nodemailer": "^7.0.13",
     "pdf-parse": "^2.4.5",
+    "pg": "^8.21.0",
     "pptxgenjs": "^4.0.1",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
@@ -50,6 +52,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.2",
     "@types/pdf-parse": "^1.1.5",
+    "@types/pg": "^8.20.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/xml2js": "^0.4.14",
