@@ -18,6 +18,7 @@ import { exportResultsCSV } from '@/lib/survey-utils'
 import type { SurveyData, SurveyQuestionData, QuestionType, SurveyResults } from '@/types/surveys'
 import { QUESTION_TYPE_LABELS, QUESTION_TYPE_ICONS } from '@/types/surveys'
 import { cn } from '@/lib/utils'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 
 const ALL_TYPES: QuestionType[] = ['mcq', 'wordcloud', 'rating', 'qa', 'slider']
 
@@ -225,6 +226,7 @@ function SurveyDetailPanel({ survey, onBack, onUpdated, onDeleted }: {
   const [showQR, setShowQR]     = useState(false)
   const [results, setResults]   = useState<SurveyResults | null>(null)
   const [tab, setTab]           = useState<'results' | 'qr'>('results')
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const base = typeof window !== 'undefined' ? window.location.origin : ''
 
   useEffect(() => {
@@ -249,8 +251,10 @@ function SurveyDetailPanel({ survey, onBack, onUpdated, onDeleted }: {
     finally { setToggling(false) }
   }
 
-  const handleDelete = async () => {
-    if (!window.confirm('Supprimer ce sondage et toutes ses réponses ?')) return
+  const handleDelete = () => setConfirmDelete(true)
+
+  const doDelete = async () => {
+    setConfirmDelete(false)
     const res = await fetch(`/api/surveys/${survey.id}`, { method: 'DELETE' })
     if (res.ok) { toast.success('Sondage supprimé'); onDeleted(survey.id) }
   }
@@ -406,6 +410,15 @@ function SurveyDetailPanel({ survey, onBack, onUpdated, onDeleted }: {
           />
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={confirmDelete}
+        title="Supprimer ce sondage ?"
+        message="Ce sondage et toutes ses réponses seront définitivement supprimés. Cette action est irréversible."
+        confirmLabel="Supprimer"
+        onConfirm={doDelete}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   )
 }

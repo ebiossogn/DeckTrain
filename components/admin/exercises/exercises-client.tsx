@@ -20,6 +20,7 @@ import {
   type QcmContent, type QcmChoice,
 } from '@/types/exercises'
 import type { ModuleWithCount } from '@/types/slides'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 
 /* ── Couleurs par type ── */
 const TYPE_STYLES: Record<ExerciseType, string> = {
@@ -80,6 +81,7 @@ export function ExercisesClient({ initialModules }: Props) {
   const [form, setForm] = useState(emptyForm())
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [exToDelete, setExToDelete] = useState<ExerciseWithContent | null>(null)
 
   /* ── Chargement des exercices ── */
   const loadExercises = useCallback(async (moduleId: string) => {
@@ -161,10 +163,13 @@ export function ExercisesClient({ initialModules }: Props) {
   }
 
   /* ── Suppression ── */
-  const handleDelete = async (ex: ExerciseWithContent) => {
-    if (!window.confirm(`Supprimer "${ex.title}" ?`)) return
-    const res = await fetch(`/api/modules/${selectedModuleId}/exercises/${ex.id}`, { method: 'DELETE' })
-    if (res.ok) setExercises((prev) => prev.filter((e) => e.id !== ex.id))
+  const handleDelete = (ex: ExerciseWithContent) => setExToDelete(ex)
+
+  const confirmDelete = async () => {
+    if (!exToDelete) return
+    const res = await fetch(`/api/modules/${selectedModuleId}/exercises/${exToDelete.id}`, { method: 'DELETE' })
+    if (res.ok) setExercises((prev) => prev.filter((e) => e.id !== exToDelete.id))
+    setExToDelete(null)
   }
 
   /* ── Drag & Drop ── */
@@ -476,6 +481,15 @@ export function ExercisesClient({ initialModules }: Props) {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!exToDelete}
+        title="Supprimer cet exercice ?"
+        message="Cet exercice sera définitivement supprimé. Cette action est irréversible."
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setExToDelete(null)}
+      />
     </div>
   )
 }

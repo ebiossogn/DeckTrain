@@ -18,6 +18,7 @@ import { SlideTypeSelector } from './slide-type-selector'
 import { SlideThumbnail } from './slide-thumbnail'
 import { ImportModal } from './import-modal'
 import { AIGeneratorModal } from './ai-generator'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 
 interface Module { id: string; title: string; description: string | null }
 
@@ -36,6 +37,7 @@ export function SlideManager({ module, initialSlides }: Props) {
   const [editingSlide, setEditingSlide] = useState<SlideWithContent | null>(initialSlides[0] ?? null)
   const [showImport, setShowImport]   = useState(false)
   const [showAI, setShowAI]           = useState(false)
+  const [slideToDelete, setSlideToDelete] = useState<string | null>(null)
 
   const selectSlide = (slide: SlideWithContent) => {
     setSelectedId(slide.id)
@@ -103,18 +105,21 @@ export function SlideManager({ module, initialSlides }: Props) {
     selectSlide(slide)
   }
 
-  const handleDeleteSlide = async (slideId: string) => {
-    if (!window.confirm('Supprimer ce slide ?')) return
-    const res = await fetch(`/api/modules/${module.id}/slides/${slideId}`, { method: 'DELETE' })
-    if (!res.ok) return
-    const remaining = slides.filter((s) => s.id !== slideId)
+  const handleDeleteSlide = (slideId: string) => setSlideToDelete(slideId)
+
+  const confirmDeleteSlide = async () => {
+    if (!slideToDelete) return
+    const res = await fetch(`/api/modules/${module.id}/slides/${slideToDelete}`, { method: 'DELETE' })
+    if (!res.ok) { setSlideToDelete(null); return }
+    const remaining = slides.filter((s) => s.id !== slideToDelete)
     setSlides(remaining)
-    if (selectedId === slideId) {
+    if (selectedId === slideToDelete) {
       const next = remaining[0] ?? null
       setSelectedId(next?.id ?? null)
       setEditingSlide(next ? { ...next } : null)
       setIsDirty(false)
     }
+    setSlideToDelete(null)
   }
 
   const handleDragEnd = async (result: DropResult) => {
@@ -419,6 +424,15 @@ export function SlideManager({ module, initialSlides }: Props) {
           />
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={!!slideToDelete}
+        title="Supprimer ce slide ?"
+        message="Ce slide sera définitivement supprimé. Cette action est irréversible."
+        confirmLabel="Supprimer"
+        onConfirm={confirmDeleteSlide}
+        onCancel={() => setSlideToDelete(null)}
+      />
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { TiptapEditor } from '@/components/ui/tiptap'
 import { cn } from '@/lib/utils'
 import type { ModuleWithCount } from '@/types/slides'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 
 /* ── Types ── */
 export type EventType = 'formation' | 'examen' | 'reunion' | 'atelier' | 'conference' | 'autre'
@@ -98,6 +99,7 @@ export function AgendaClient({ initialEvents, modules }: Props) {
   const [form, setForm] = useState(emptyForm())
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [evToDelete, setEvToDelete] = useState<AgendaEvent | null>(null)
 
   const sf = <K extends keyof ReturnType<typeof emptyForm>>(k: K, v: ReturnType<typeof emptyForm>[K]) =>
     setForm((f) => ({ ...f, [k]: v }))
@@ -129,10 +131,13 @@ export function AgendaClient({ initialEvents, modules }: Props) {
     setSaving(false)
   }
 
-  const handleDelete = async (ev: AgendaEvent) => {
-    if (!window.confirm(`Supprimer "${ev.title}" ?`)) return
-    if ((await fetch(`/api/agenda/${ev.id}`, { method: 'DELETE' })).ok)
-      setEvents((prev) => prev.filter((e) => e.id !== ev.id))
+  const handleDelete = (ev: AgendaEvent) => setEvToDelete(ev)
+
+  const confirmDelete = async () => {
+    if (!evToDelete) return
+    if ((await fetch(`/api/agenda/${evToDelete.id}`, { method: 'DELETE' })).ok)
+      setEvents((prev) => prev.filter((e) => e.id !== evToDelete.id))
+    setEvToDelete(null)
   }
 
   const inputCls = cn(
@@ -346,6 +351,15 @@ export function AgendaClient({ initialEvents, modules }: Props) {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!evToDelete}
+        title="Supprimer cet événement ?"
+        message="Cet événement agenda sera définitivement supprimé. Cette action est irréversible."
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setEvToDelete(null)}
+      />
     </div>
   )
 }

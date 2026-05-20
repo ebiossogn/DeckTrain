@@ -8,6 +8,7 @@ import {
   GraduationCap, BookOpen,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -197,6 +198,7 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
   const [showCreate, setShowCreate] = useState(false)
   const [toggling, setToggling]     = useState<string | null>(null)
   const [deleting, setDeleting]     = useState<string | null>(null)
+  const [userToDelete, setUserToDelete] = useState<AppUserRecord | null>(null)
   const [filter, setFilter]         = useState<'all' | 'formateur' | 'participant'>('all')
 
   const filtered = users.filter((u) => filter === 'all' || u.type === filter)
@@ -217,13 +219,16 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
     finally { setToggling(null) }
   }
 
-  const handleDelete = async (user: AppUserRecord) => {
-    if (!window.confirm(`Supprimer le compte de ${user.name} ?`)) return
-    setDeleting(user.id)
+  const handleDelete = (user: AppUserRecord) => setUserToDelete(user)
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return
+    setDeleting(userToDelete.id)
+    setUserToDelete(null)
     try {
-      const res = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/users/${userToDelete.id}`, { method: 'DELETE' })
       if (!res.ok) { toast.error('Erreur'); return }
-      setUsers((p) => p.filter((u) => u.id !== user.id))
+      setUsers((p) => p.filter((u) => u.id !== userToDelete.id))
       toast.success('Compte supprimé')
     } catch { toast.error('Erreur réseau') }
     finally { setDeleting(null) }
@@ -332,6 +337,15 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
           />
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={!!userToDelete}
+        title="Supprimer ce compte ?"
+        message={`Le compte de ${userToDelete?.name ?? ''} sera définitivement supprimé. Cette action est irréversible.`}
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setUserToDelete(null)}
+      />
     </div>
   )
 }

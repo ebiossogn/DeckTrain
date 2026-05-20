@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ModuleCard } from './module-card'
 import { ModuleFormModal } from './module-form-modal'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 import type { ModuleWithCount } from '@/types/slides'
 
 interface Props {
@@ -19,6 +20,7 @@ export function ModulesClient({ initialModules, liveMap = {} }: Props) {
   const [modules, setModules] = useState<ModuleWithCount[]>(initialModules)
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<ModuleWithCount | null>(null)
+  const [confirmTarget, setConfirmTarget] = useState<ModuleWithCount | null>(null)
 
   const openCreate = () => { setEditing(null); setModalOpen(true) }
   const openEdit = (m: ModuleWithCount) => { setEditing(m); setModalOpen(true) }
@@ -31,11 +33,16 @@ export function ModulesClient({ initialModules, liveMap = {} }: Props) {
     )
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     const m = modules.find((m) => m.id === id)
-    if (!window.confirm(`Supprimer "${m?.title}" et tous ses slides ?`)) return
-    const res = await fetch(`/api/modules/${id}`, { method: 'DELETE' })
-    if (res.ok) setModules((prev) => prev.filter((m) => m.id !== id))
+    if (m) setConfirmTarget(m)
+  }
+
+  const confirmDelete = async () => {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/modules/${confirmTarget.id}`, { method: 'DELETE' })
+    if (res.ok) setModules((prev) => prev.filter((m) => m.id !== confirmTarget.id))
+    setConfirmTarget(null)
   }
 
   const handleDragEnd = async (result: DropResult) => {
@@ -126,6 +133,16 @@ export function ModulesClient({ initialModules, liveMap = {} }: Props) {
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
         initial={editing}
+      />
+
+      <ConfirmModal
+        isOpen={!!confirmTarget}
+        title="Supprimer ce module ?"
+        message="Cette action supprimera définitivement le module et tous ses contenus associés."
+        details={confirmTarget ? `${confirmTarget._count.slides} slide(s) sera/seront également supprimé(s). Cette action est irréversible.` : undefined}
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmTarget(null)}
       />
     </div>
   )

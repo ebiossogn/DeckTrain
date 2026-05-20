@@ -8,6 +8,7 @@ import {
   Trash2, Copy, Eye, EyeOff, Crown,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -310,6 +311,7 @@ export function TeamClient({ initial, currentUserId }: { initial: AdminUser[]; c
   const [showInvite, setShowInvite] = useState(false)
   const [editUser, setEditUser]     = useState<AdminUser | null>(null)
   const [deleting, setDeleting]     = useState<string | null>(null)
+  const [adminToDelete, setAdminToDelete] = useState<AdminUser | null>(null)
   const [toggling, setToggling]     = useState<string | null>(null)
   const [expandPerms, setExpandPerms] = useState<string | null>(null)
 
@@ -329,14 +331,17 @@ export function TeamClient({ initial, currentUserId }: { initial: AdminUser[]; c
     finally { setToggling(null) }
   }
 
-  const handleDelete = async (user: AdminUser) => {
-    if (!window.confirm(`Supprimer ${user.email} ?`)) return
-    setDeleting(user.id)
+  const handleDelete = (user: AdminUser) => setAdminToDelete(user)
+
+  const confirmDelete = async () => {
+    if (!adminToDelete) return
+    setDeleting(adminToDelete.id)
+    setAdminToDelete(null)
     try {
-      const res = await fetch(`/api/admin/team/${user.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/team/${adminToDelete.id}`, { method: 'DELETE' })
       const data = await res.json()
       if (!res.ok) { toast.error(data.error ?? 'Erreur'); return }
-      setAdmins((prev) => prev.filter((a) => a.id !== user.id))
+      setAdmins((prev) => prev.filter((a) => a.id !== adminToDelete.id))
       toast.success('Admin supprimé')
     } catch { toast.error('Erreur réseau') }
     finally { setDeleting(null) }
@@ -476,6 +481,15 @@ export function TeamClient({ initial, currentUserId }: { initial: AdminUser[]; c
           />
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={!!adminToDelete}
+        title="Supprimer cet administrateur ?"
+        message={`Le compte admin de ${adminToDelete?.email ?? ''} sera définitivement supprimé.`}
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setAdminToDelete(null)}
+      />
     </div>
   )
 }
