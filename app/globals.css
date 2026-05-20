@@ -11,6 +11,7 @@
   --color-dark-surface:  #1C1C1C;
   --color-or-sable:      #C8B89A;
   --color-or-profond:    #A89070;
+  --color-accent-rgb:    0 212 255;   /* espace-séparé pour Tailwind opacity */
   --color-accent:        #00D4FF;
   --color-accent-dark:   #0099BB;
   --color-border:        #2E2E2E;

@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { applyAccent } from '@/components/providers/accent-provider'
 
 interface AppSettings {
   id: string
@@ -56,6 +57,7 @@ export function SettingsClient({ initial }: { initial: AppSettings }) {
         body: JSON.stringify(app),
       })
       if (!res.ok) throw new Error()
+      applyAccent(app.accentColor)
       toast.success('Paramètres sauvegardés')
     } catch {
       toast.error('Erreur lors de la sauvegarde')

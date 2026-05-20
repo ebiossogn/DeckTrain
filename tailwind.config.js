@@ -9,8 +9,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /* ── Interactif (cyan) ── */
-        accent:        '#00D4FF',
+        /* ── Interactif (cyan) — piloté par CSS var pour le thème dynamique ── */
+        accent:        'rgb(var(--color-accent-rgb) / <alpha-value>)',
         'accent-dark': '#0099BB',
 
         /* ── Institutionnel (or) ── */

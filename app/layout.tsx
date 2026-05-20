@@ -1,8 +1,13 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/components/providers/session-provider'
+import { AccentProvider } from '@/components/providers/accent-provider'
+import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
@@ -14,12 +19,21 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await prisma.appSettings
+    .findUnique({ where: { id: 'singleton' } })
+    .catch(() => null)
+
+  const accentColor = settings?.accentColor ?? '#00D4FF'
+
   return (
     <html lang="fr" className="dark" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <AccentProvider accentColor={accentColor} />
+            {children}
+          </ThemeProvider>
         </AuthProvider>
         <Toaster
           position="bottom-right"
