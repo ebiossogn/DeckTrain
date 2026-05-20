@@ -14,13 +14,13 @@ interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    'bg-accent text-dark-bg font-semibold hover:shadow-[0_0_24px_rgba(0,212,255,0.5)] hover:brightness-110',
+    'bg-accent text-[#111111] font-semibold hover:bg-accent-dark hover:shadow-[0_0_20px_rgba(0,212,255,0.4)]',
   secondary:
-    'border border-accent/50 text-accent hover:bg-accent/10 hover:border-accent/80',
+    'border border-or text-or hover:bg-[rgba(200,184,154,0.08)] hover:border-or-profond',
   ghost:
-    'text-dark-text/70 dark:text-dark-text/70 hover:bg-white/10 dark:hover:bg-white/5',
+    'text-text-secondary hover:bg-white/8 hover:text-dark-text',
   danger:
-    'bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25',
+    'bg-red-500/10 text-red-400 border border-red-500/25 hover:bg-red-500/20',
 }
 
 const sizeClasses: Record<Size, string> = {

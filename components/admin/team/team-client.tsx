@@ -393,7 +393,7 @@ export function TeamClient({ initial, currentUserId }: { initial: AdminUser[]; c
                     {!admin.isActive && <span className="text-[10px] bg-dark-text/10 text-dark-text/40 px-1.5 py-0.5 rounded-full">Désactivé</span>}
                   </div>
                   <p className="text-xs text-light-text/45 dark:text-dark-text/45 mt-0.5">{admin.email}</p>
-                  <p className="text-[10px] text-light-text/30 dark:text-dark-text/30 mt-0.5">
+                  <p className="text-[10px] text-light-text/30 dark:text-dark-text/30 mt-0.5" suppressHydrationWarning>
                     Dernière connexion : {timeAgo(admin.lastLoginAt)}
                   </p>
                 </div>

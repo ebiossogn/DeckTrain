@@ -18,12 +18,13 @@ function addBackground(slide: PptxGenJS.Slide) {
   slide.background = { color: BG }
 }
 
+// Barre décorative verticale cyan — addText vide avec fill pour éviter addShape
 function addAccentLine(slide: PptxGenJS.Slide, y = 0.18) {
-  slide.addShape(PptxGenJS.ShapeType.rect, { x: 0.5, y, w: 0.06, h: 0.55, fill: { color: ACCENT } })
+  slide.addText(' ', { x: 0.5, y, w: 0.06, h: 0.55, fill: { color: ACCENT } })
 }
 
 function addFooter(slide: PptxGenJS.Slide, idx: number, total: number) {
-  slide.addText(`© CHRIST J. — TrainDeck`, {
+  slide.addText(`© CHRIST J. — DeckTrain`, {
     x: 0.4, y: 7.0, w: 6, h: 0.2, fontSize: 7, color: '3a4a5a', align: 'left',
   })
   slide.addText(`${idx + 1} / ${total}`, {
@@ -62,14 +63,17 @@ function renderTitleCode(slide: PptxGenJS.Slide, c: TitleCodeContent) {
     x: 0.75, y: 0.2, w: 8.7, h: 0.7,
     fontSize: 28, bold: true, color: WHITE, fontFace: 'Calibri',
   })
-  slide.addShape(PptxGenJS.ShapeType.rect, {
+  // Fond du bloc code + texte en un seul addText (fill remplace addShape)
+  slide.addText(c.code || '', {
     x: 0.5, y: 1.1, w: 9.2, h: 5.5,
-    fill: { color: '1A1A2E' }, line: { color: ACCENT, width: 1 },
-  })
-  slide.addText(c.code, {
-    x: 0.7, y: 1.25, w: 8.8, h: 5.2,
     fontSize: 12, color: 'A8DADC', fontFace: 'Courier New', valign: 'top', wrap: true,
+    fill: { color: '1A1A2E' },
+    line: { color: ACCENT, width: 1, type: 'solid' },
   })
+}
+
+function isAbsoluteUrl(url: string): boolean {
+  try { return /^https?:\/\//.test(url) } catch { return false }
 }
 
 function renderTitleImage(slide: PptxGenJS.Slide, c: TitleImageContent) {
@@ -78,16 +82,10 @@ function renderTitleImage(slide: PptxGenJS.Slide, c: TitleImageContent) {
     x: 0.75, y: 0.2, w: 8.7, h: 0.7,
     fontSize: 28, bold: true, color: WHITE, fontFace: 'Calibri',
   })
-  if (c.imageUrl) {
-    try {
-      slide.addImage({ path: c.imageUrl, x: 1.5, y: 1.2, w: 7, h: 5, sizing: { type: 'contain', w: 7, h: 5 } })
-    } catch {
-      slide.addText(`[Image: ${c.altText || c.imageUrl}]`, {
-        x: 1.5, y: 1.2, w: 7, h: 5, fontSize: 14, color: MUTED, align: 'center', valign: 'middle',
-      })
-    }
+  if (c.imageUrl && isAbsoluteUrl(c.imageUrl)) {
+    slide.addImage({ path: c.imageUrl, x: 1.5, y: 1.2, w: 7, h: 5, sizing: { type: 'contain', w: 7, h: 5 } })
   } else {
-    slide.addText('[Image placeholder]', {
+    slide.addText(c.imageUrl ? `[Image: ${c.altText || c.imageUrl}]` : '[Image placeholder]', {
       x: 1.5, y: 1.2, w: 7, h: 5, fontSize: 14, color: MUTED, align: 'center', valign: 'middle',
     })
   }
@@ -96,7 +94,7 @@ function renderTitleImage(slide: PptxGenJS.Slide, c: TitleImageContent) {
 function renderQuote(slide: PptxGenJS.Slide, c: QuoteContent) {
   const bgMap: Record<string, string> = { cyan: '0A2A35', purple: '1A0A35', dark: '080810', amber: '2A1A00' }
   slide.background = { color: bgMap[c.background] ?? BG }
-  slide.addText('“', {
+  slide.addText('"', {
     x: 0.4, y: 0.3, w: 1.5, h: 1.5, fontSize: 96, color: ACCENT, fontFace: 'Georgia',
   })
   slide.addText(c.quote, {
@@ -112,8 +110,9 @@ function renderQuote(slide: PptxGenJS.Slide, c: QuoteContent) {
 }
 
 function renderComparison(slide: PptxGenJS.Slide, c: ComparisonContent) {
-  slide.addShape(PptxGenJS.ShapeType.rect, { x: 0, y: 0, w: 4.7, h: 7.5, fill: { color: '0E1622' } })
-  slide.addShape(PptxGenJS.ShapeType.rect, { x: 5.1, y: 0, w: 5.1, h: 7.5, fill: { color: '0E2216' } })
+  // Colonnes de fond via addText vide avec fill (remplace addShape)
+  slide.addText(' ', { x: 0, y: 0, w: 4.7, h: 7.5, fill: { color: '0E1622' } })
+  slide.addText(' ', { x: 5.1, y: 0, w: 5.1, h: 7.5, fill: { color: '0E2216' } })
   slide.addText(c.dividerLabel, {
     x: 4.2, y: 3.2, w: 0.9, h: 0.7,
     fontSize: 11, bold: true, color: WHITE, align: 'center', fontFace: 'Calibri',
@@ -150,7 +149,7 @@ export async function generatePptx(moduleTitle: string, slides: SlideWithContent
   const pptx = new PptxGenJS()
   pptx.layout = 'LAYOUT_WIDE'
   pptx.author = 'CHRIST J.'
-  pptx.company = 'TrainDeck'
+  pptx.company = 'DeckTrain'
   pptx.subject = moduleTitle
   pptx.title = moduleTitle
 
@@ -169,5 +168,6 @@ export async function generatePptx(moduleTitle: string, slides: SlideWithContent
     addFooter(slide, i, slides.length)
   }
 
-  return (await pptx.write({ outputType: 'nodebuffer' })) as unknown as Buffer
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (await (pptx as any).write('nodebuffer')) as Buffer
 }

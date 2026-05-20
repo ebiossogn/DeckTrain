@@ -99,7 +99,7 @@ export function SettingsClient({ initial }: { initial: AppSettings }) {
           <h1 className="font-syne text-3xl font-bold text-light-text dark:text-dark-text">Paramètres</h1>
         </div>
         <p className="text-light-text/50 dark:text-dark-text/50">
-          Configuration globale de la plateforme TrainDeck.
+          Configuration globale de la plateforme DeckTrain.
         </p>
       </motion.div>
 
@@ -268,7 +268,7 @@ export function SettingsClient({ initial }: { initial: AppSettings }) {
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
               {[
-                ['Plateforme', 'TrainDeck v1.0'],
+                ['Plateforme', 'DeckTrain v1.0'],
                 ['Framework', 'Next.js 14 (App Router)'],
                 ['Base de données', 'SQLite (Prisma)'],
                 ['Authentification', 'NextAuth.js JWT'],

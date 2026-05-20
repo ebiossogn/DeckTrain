@@ -12,9 +12,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     where: { code: params.code.toUpperCase() },
     select: { title: true, description: true },
   })
-  if (!survey) return { title: 'Sondage introuvable — TrainDeck' }
+  if (!survey) return { title: 'Sondage introuvable — DeckTrain' }
   return {
-    title: `${survey.title} — TrainDeck`,
+    title: `${survey.title} — DeckTrain`,
     description: survey.description ?? 'Répondez à ce sondage.',
   }
 }
@@ -47,7 +47,7 @@ export default async function SurveyRespondPage({ params }: Props) {
       {/* Header */}
       <header className="px-5 py-4 border-b border-white/8">
         <div className="max-w-lg mx-auto flex items-center gap-2">
-          <span className="font-syne font-bold text-accent text-lg">Train<span className="text-white">Deck</span></span>
+          <span className="font-display font-bold text-lg"><span className="text-white">Deck</span><span className="text-or">Train</span></span>
           <span className="text-white/20 text-xs ml-auto">Sondage #{survey.code}</span>
         </div>
       </header>
@@ -67,7 +67,7 @@ export default async function SurveyRespondPage({ params }: Props) {
 
       {/* Footer */}
       <footer className="py-4 text-center text-white/20 text-xs border-t border-white/8">
-        © CHRIST J. — TrainDeck
+        © CHRIST J. — DeckTrain
       </footer>
     </div>
   )

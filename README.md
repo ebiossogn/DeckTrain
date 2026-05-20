@@ -1,4 +1,4 @@
-# TrainDeck
+# DeckTrain
 
 Plateforme de formation interactive pensée pour les équipes tech africaines — alternative moderne à PowerPoint, avec slides animés, exercices en temps réel, sondages live et exports PPTX/PDF.
 
@@ -34,7 +34,7 @@ Plateforme de formation interactive pensée pour les équipes tech africaines �
 
 ```bash
 # 1. Cloner
-git clone <url> traindeck && cd traindeck
+git clone <url> decktrain && cd decktrain
 
 # 2. Installer les dépendances
 npm install
@@ -62,7 +62,7 @@ NEXTAUTH_SECRET="votre-secret-ici"
 ## Accès admin par défaut
 
 ```
-Email    : admin@traindeck.io
+Email    : admin@decktrain.io
 Password : Admin@2026!
 ```
 
@@ -122,4 +122,6 @@ prisma/           # Schéma + seed
 
 ## Licence
 
-© 2026 CHRIST J. — Tous droits réservés.
+© CHRIST J. — Tous droits réservés.  
+Charte graphique DeckTrain — Police display : Cormorant Garamond · Corps : DM Sans · Code : JetBrains Mono  
+Or institutionnel `#C8B89A` · Cyan interactif `#00D4FF` · Fond `#111111`

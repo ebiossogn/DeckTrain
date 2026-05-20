@@ -30,7 +30,7 @@ export default async function PresentSurveyPage({ params }: Props) {
     <div className="min-h-screen bg-[#0C0C14] flex flex-col">
       {/* Header barre */}
       <header className="px-8 py-4 border-b border-white/8 flex items-center gap-4">
-        <span className="font-syne font-bold text-accent text-xl">Train<span className="text-white">Deck</span></span>
+        <span className="font-display font-bold text-xl"><span className="text-white">Deck</span><span className="text-or">Train</span></span>
         <div className="flex-1 mx-6">
           <h1 className="font-syne font-bold text-white text-lg leading-none">{survey.title}</h1>
           {survey.description && (
@@ -80,7 +80,7 @@ export default async function PresentSurveyPage({ params }: Props) {
       </div>
 
       <footer className="py-3 text-center text-white/20 text-xs border-t border-white/8">
-        © CHRIST J. — TrainDeck
+        © CHRIST J. — DeckTrain
       </footer>
     </div>
   )

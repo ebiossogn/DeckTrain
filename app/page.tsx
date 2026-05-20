@@ -3,206 +3,164 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
-  Zap, Monitor, BookOpen, Users, ArrowRight, Settings, Calendar,
-  BarChart2, Shield, FileDown, CheckCircle2, Globe, Cpu, Star,
+  Zap, Monitor, BookOpen, Users, ArrowRight, Calendar,
+  BarChart2, Shield, FileDown, Globe, Cpu, Star, Wifi,
 } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { PricingSection } from '@/components/landing/pricing-section'
 import { cn } from '@/lib/utils'
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 32 },
   visible: (i: number) => ({
     opacity: 1, y: 0,
-    transition: { delay: i * 0.09, duration: 0.5, ease: 'easeOut' },
+    transition: { delay: i * 0.1, duration: 0.55, ease: 'easeOut' },
   }),
 }
 
+const why = [
+  { icon: Zap,       title: 'Tout-en-un',             desc: 'Slides · exercices · agenda · sondages — une seule plateforme, zéro friction.' },
+  { icon: Wifi,      title: 'Fonctionne hors-ligne',  desc: 'Hébergeable localement sur votre réseau interne, sans dépendance cloud.' },
+  { icon: Globe,     title: 'Prix accessible',         desc: 'Adapté aux budgets africains. Pas de licence mensuelle cachée.' },
+  { icon: BookOpen,  title: '100 % en français',       desc: 'Interface, support et documentation entièrement en français.' },
+  { icon: BarChart2, title: 'Interactif',              desc: 'QCM en direct, sondages live, word cloud — vos apprenants participent.' },
+  { icon: Shield,    title: 'Sécurisé',                desc: 'Vos données restent chez vous. RBAC, rate limiting, logs complets.' },
+]
+
 const features = [
-  { icon: Monitor,    title: 'Présentation Live',    desc: 'Slides plein écran avec 10 transitions animées, navigation clavier/swipe, minuteur et notes présentateur.', badge: '7 types' },
-  { icon: BookOpen,   title: 'Exercices Intégrés',   desc: 'QCM interactifs et ateliers pratiques avec correction instantanée, niveaux de difficulté et suivi.', badge: 'QCM + Ateliers' },
-  { icon: BarChart2,  title: 'Sondages Live',         desc: 'Mentimeter-like : 5 types de questions, affichage temps réel, QR code et export CSV/PDF.', badge: '5 types' },
-  { icon: Calendar,   title: 'Agenda Dynamique',      desc: 'Planning visuel des sessions avec statuts, filtres par module et export.', badge: 'Timeline' },
-  { icon: Users,      title: "Gestion d'Équipe",      desc: '5 niveaux de rôles admin, invitations sécurisées, permissions granulaires par module.', badge: 'RBAC' },
-  { icon: Shield,     title: 'Sécurité Avancée',      desc: 'Rate limiting, blocage après 10 tentatives, logs de connexion, timeout de session 30 min.', badge: 'Enterprise-ready' },
-  { icon: FileDown,   title: 'Export PDF / PPTX',     desc: 'Exportez chaque module en présentation PowerPoint ou PDF prêt à imprimer en un clic.', badge: 'Nouveau' },
-  { icon: Globe,      title: 'Multi-appareil',        desc: 'Responsive mobile-first, PWA-ready. Formateur sur laptop, participants sur smartphones.', badge: 'PWA' },
+  { icon: Monitor,   title: 'Présentation',   desc: '7 types de slides, 10 transitions Framer Motion, minuteur, notes.',       badge: '7 types' },
+  { icon: BookOpen,  title: 'Exercices',       desc: 'QCM interactifs et ateliers pratiques avec correction instantanée.',      badge: 'QCM + Atelier' },
+  { icon: BarChart2, title: 'Sondages live',   desc: '5 types de questions, QR code, polling 2s, word cloud, export CSV.',     badge: '5 types' },
+  { icon: Calendar,  title: 'Agenda',          desc: 'Planning des sessions avec vue calendrier et timeline mensuelle.',        badge: 'Calendrier' },
+  { icon: Users,     title: "Équipe",          desc: '5 niveaux de rôles admin, invitations sécurisées, RBAC granulaire.',     badge: 'RBAC' },
+  { icon: FileDown,  title: 'Export',          desc: 'Exportez vos modules en PPTX ou PDF en un clic.',                        badge: 'PPTX + PDF' },
+  { icon: Shield,    title: 'Sécurité',        desc: 'Rate limiting, blocage compte, logs de connexion, timeout 30 min.',      badge: 'Enterprise' },
+  { icon: Cpu,       title: 'Tech-first',      desc: "Coloration syntaxique Shiki, éditeur Tiptap, Recharts, Framer Motion.", badge: 'Stack moderne' },
 ]
 
-const stats = [
-  { value: '7',   label: 'Types de slides' },
-  { value: '10',  label: 'Transitions' },
-  { value: '5',   label: 'Types de sondages' },
-  { value: '∞',   label: 'Participants' },
-]
-
-const pricing = [
-  {
-    name: 'Starter',
-    price: 'Gratuit',
-    period: '',
-    desc: 'Parfait pour tester TrainDeck avec une petite équipe.',
-    color: 'border-dark-text/10',
-    badge: '',
-    features: [
-      '3 modules, 30 slides',
-      '2 sondages simultanés',
-      '10 participants max',
-      'Export PDF',
-      'Support communautaire',
-    ],
-    cta: 'Commencer gratuitement',
-    ctaVariant: 'secondary' as const,
-    href: '/login',
-  },
-  {
-    name: 'Pro',
-    price: '29 000',
-    period: '/ mois · FCFA',
-    desc: 'Pour les équipes de formation en croissance.',
-    color: 'border-accent',
-    badge: 'Populaire',
-    features: [
-      'Modules & slides illimités',
-      'Sondages illimités',
-      '100 participants',
-      'Export PDF + PPTX',
-      '5 admins, rôles RBAC',
-      'Sécurité avancée',
-      'Support prioritaire',
-    ],
-    cta: 'Essai 14 jours',
-    ctaVariant: 'primary' as const,
-    href: '/login',
-  },
-  {
-    name: 'Enterprise',
-    price: 'Sur devis',
-    period: '',
-    desc: 'Déploiement on-premise pour grandes organisations.',
-    color: 'border-dark-text/10',
-    badge: '',
-    features: [
-      'Tout ce qui est dans Pro',
-      'Participants illimités',
-      'Hébergement on-premise',
-      'SSO / LDAP',
-      'SLA garanti',
-      'Intégration LMS',
-      'Formation & onboarding',
-    ],
-    cta: 'Nous contacter',
-    ctaVariant: 'secondary' as const,
-    href: 'mailto:christtangbe@ebiosso.com',
-  },
-]
 
 const testimonials = [
-  { name: 'Ingrid M.', role: 'Responsable RH, Dakar', text: "TrainDeck a transformé nos sessions d'intégration. Les sondages live changent vraiment la dynamique de groupe.", stars: 5 },
-  { name: 'Kofi A.',   role: 'CTO, Accra',            text: 'Enfin une alternative aux outils occidentaux qui comprend nos contraintes réseau. Rapide, élégant, efficace.', stars: 5 },
-  { name: 'Aminata D.', role: 'Formatrice, Abidjan',  text: "L'export PPTX m'a sauvé la mise quand le projecteur ne reconnaissait pas mon laptop. Parfait backup !", stars: 5 },
+  { name: 'Ingrid M.',   role: 'Responsable RH, Dakar',    text: "DeckTrain a transformé nos sessions d'intégration. Les sondages live changent vraiment la dynamique de groupe.", stars: 5 },
+  { name: 'Kofi A.',     role: 'CTO, Accra',               text: 'Enfin une alternative sérieuse aux outils occidentaux qui comprend nos contraintes réseau. Rapide, élégant.', stars: 5 },
+  { name: 'Aminata D.',  role: 'Formatrice, Abidjan',      text: "L'export PPTX m'a sauvé la mise quand le projecteur ne reconnaissait pas mon laptop. Parfait backup !", stars: 5 },
 ]
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg">
+    <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors duration-300">
       <Navbar />
 
       <main className="flex-1 relative overflow-hidden">
-        {/* Arrière-plan décoratif */}
+
+        {/* ── Déco fond ── */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-60 left-1/4 w-[700px] h-[700px] bg-accent/4 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-accent/3 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-blue-500/3 rounded-full blur-3xl" />
-          <div className="absolute inset-0 opacity-[0.025]"
-            style={{ backgroundImage: 'linear-gradient(rgba(0,212,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,1) 1px, transparent 1px)', backgroundSize: '64px 64px' }}
-          />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full bg-accent/3 blur-[120px]" />
+          <div className="absolute bottom-1/3 right-0 w-[500px] h-[500px] bg-or/3 blur-[100px] rounded-full" />
+          <div className="absolute inset-0 opacity-[0.018]"
+            style={{ backgroundImage: 'linear-gradient(rgba(200,184,154,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,184,154,0.6) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
         </div>
 
         {/* ── HERO ── */}
-        <section className="relative z-10 flex flex-col items-center text-center px-6 pt-24 pb-20">
+        <section className="relative z-10 flex flex-col items-center text-center px-6 pt-28 pb-24">
           <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible"
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/8 text-accent text-sm font-medium mb-8">
-            <Globe size={13} />
-            Conçu pour l'Afrique · Formation Tech · Mai 2026
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/25 bg-accent/6 text-accent text-sm mb-10 label-dt">
+            <Globe size={12} />
+            Conçu pour l'Afrique · Formation Tech
           </motion.div>
 
-          <motion.h1 custom={1} variants={fadeUp} initial="hidden" animate="visible"
-            className="font-syne text-7xl md:text-9xl font-bold leading-none mb-6 tracking-tight">
-            Train<span className="text-accent drop-shadow-[0_0_40px_rgba(0,212,255,0.6)]">Deck</span>
-          </motion.h1>
+          {/* Logo display */}
+          <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible"
+            className="font-display font-light leading-none mb-6 tracking-tight"
+            style={{ fontSize: 'clamp(72px, 10vw, 110px)' }}>
+            <span className="text-white">Deck</span><span className="text-or">Train</span>
+          </motion.div>
 
+          {/* Tagline */}
           <motion.p custom={2} variants={fadeUp} initial="hidden" animate="visible"
-            className="text-xl md:text-2xl text-light-text/65 dark:text-dark-text/65 mb-3 font-inter max-w-2xl">
-            La plateforme de formation interactive pensée pour les équipes tech africaines
+            className="font-display text-2xl md:text-3xl font-light text-white mb-3 max-w-2xl">
+            La formation interactive
+            <br className="hidden md:block" /> pensée pour l'Afrique
           </motion.p>
 
           <motion.p custom={3} variants={fadeUp} initial="hidden" animate="visible"
-            className="text-base text-light-text/45 dark:text-dark-text/45 max-w-xl mx-auto mb-10 leading-relaxed">
-            Slides interactifs · Exercices en temps réel · Sondages live · Export PPTX/PDF.
-            <br className="hidden md:block" /> Fini PowerPoint, bienvenue dans l'ère de la formation engageante.
+            className="text-sm font-sans text-or mb-2 tracking-wide">
+            Slides · Exercices · Sondages · Agenda
           </motion.p>
 
-          <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible"
+          <motion.p custom={4} variants={fadeUp} initial="hidden" animate="visible"
+            className="text-sm text-text-secondary max-w-lg mx-auto mb-10 leading-relaxed">
+            Une alternative moderne à PowerPoint — interactive, sécurisée, adaptée aux
+            réalités du terrain pour les formateurs de Dakar à Kinshasa.
+          </motion.p>
+
+          <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible"
             className="flex flex-wrap gap-4 justify-center">
-            <Link href="/present">
-              <Button size="lg" variant="primary" className="group shadow-[0_0_24px_rgba(0,212,255,0.25)]">
-                <Monitor size={18} />
-                Voir les modules
+            <Link href="/login">
+              <Button size="lg" variant="primary" className="group">
+                Commencer maintenant
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/present">
               <Button size="lg" variant="secondary">
-                <Settings size={18} />
-                Administration
+                Voir la démo
               </Button>
             </Link>
           </motion.div>
 
           {/* Stats */}
-          <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible"
-            className="flex flex-wrap gap-8 justify-center mt-16">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="font-syne text-4xl font-bold text-accent mb-1">{s.value}</div>
-                <div className="text-xs text-light-text/40 dark:text-dark-text/40 uppercase tracking-widest">{s.label}</div>
+          <motion.div custom={6} variants={fadeUp} initial="hidden" animate="visible"
+            className="flex flex-wrap gap-10 justify-center mt-16">
+            {[
+              { v: '7',  l: 'Types de slides' },
+              { v: '10', l: 'Transitions' },
+              { v: '5',  l: 'Types de sondages' },
+              { v: '∞',  l: 'Participants' },
+            ].map((s) => (
+              <div key={s.l} className="text-center">
+                <div className="font-display font-light text-5xl text-or mb-1">{s.v}</div>
+                <div className="label-dt text-text-secondary">{s.l}</div>
               </div>
             ))}
           </motion.div>
         </section>
 
-        {/* ── AFRICA STRIP ── */}
-        <section className="relative z-10 bg-accent/5 border-y border-accent/10 py-10 px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Cpu size={16} className="text-accent" />
-                <span className="font-syne font-bold text-light-text dark:text-dark-text text-lg">
-                  Construit pour le contexte africain
-                </span>
-              </div>
-              <p className="text-sm text-light-text/55 dark:text-dark-text/55 max-w-2xl mx-auto leading-relaxed">
-                Fonctionne hors-ligne, optimisé pour les connexions lentes, interface en français,
-                tarification en FCFA. TrainDeck comprend les réalités du terrain pour les formateurs
-                de Dakar à Kinshasa, d'Abidjan à Nairobi.
-              </p>
+        {/* ── POURQUOI DECKTRAIN ── */}
+        <section className="relative z-10 bg-light-surface/80 dark:bg-dark-surface/50 border-y border-light-border dark:border-dark-border py-20 px-6 transition-colors duration-300">
+          <div className="max-w-5xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="text-center mb-14">
+              <p className="label-dt text-text-secondary mb-3">Pourquoi DeckTrain ?</p>
+              <h2 className="font-display text-3xl font-light text-white">6 bonnes raisons de changer</h2>
             </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {why.map((w, i) => (
+                <motion.div key={w.title}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ delay: i * 0.07 }}>
+                  <div className="bg-dark-bg border border-dark-border rounded-2xl p-5 h-full group hover:border-accent/30 transition-colors">
+                    <div className="w-9 h-9 rounded-xl bg-or/8 text-or flex items-center justify-center mb-3 group-hover:bg-or/15 transition-colors">
+                      <w.icon size={18} />
+                    </div>
+                    <h3 className="font-display font-semibold text-or text-lg mb-1">{w.title}</h3>
+                    <p className="text-sm text-text-secondary leading-relaxed">{w.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ── FONCTIONNALITÉS ── */}
         <section className="relative z-10 max-w-6xl mx-auto px-6 py-24">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="text-center mb-14">
-            <Badge variant="muted" className="mb-4">Fonctionnalités</Badge>
-            <h2 className="font-syne text-3xl font-bold text-light-text dark:text-dark-text mb-3">
-              Tout ce dont vous avez besoin
-            </h2>
-            <p className="text-light-text/50 dark:text-dark-text/50 max-w-xl mx-auto">
+            <p className="label-dt text-text-secondary mb-3">Fonctionnalités</p>
+            <h2 className="font-display text-3xl font-light text-white mb-3">Tout ce dont vous avez besoin</h2>
+            <p className="text-sm text-text-secondary max-w-lg mx-auto">
               Une plateforme complète pour créer, animer et évaluer vos formations techniques.
             </p>
           </motion.div>
@@ -211,92 +169,31 @@ export default function HomePage() {
             {features.map((f, i) => (
               <motion.div key={f.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.07, duration: 0.4 }}>
-                <Card hoverable className="p-5 h-full group">
-                  <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-3 group-hover:bg-accent/20 transition-colors">
-                    <f.icon size={20} />
+                transition={{ delay: i * 0.06 }}>
+                <div className="bg-dark-surface border border-dark-border rounded-2xl p-5 h-full group hover:border-accent/25 hover:shadow-[0_0_20px_rgba(0,212,255,0.06)] transition-all">
+                  <div className="w-9 h-9 rounded-xl bg-accent/8 text-accent flex items-center justify-center mb-3 group-hover:bg-accent/15 transition-colors">
+                    <f.icon size={18} />
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-syne font-semibold text-sm text-light-text dark:text-dark-text">{f.title}</h3>
-                    {f.badge === 'Nouveau' && <Badge variant="default" className="text-[9px]">NEW</Badge>}
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <h3 className="font-display font-semibold text-or text-base">{f.title}</h3>
                   </div>
-                  <p className="text-xs text-light-text/55 dark:text-dark-text/55 leading-relaxed">{f.desc}</p>
-                  <p className="text-[10px] text-accent/60 mt-2 font-medium">{f.badge}</p>
-                </Card>
+                  <p className="text-xs text-text-secondary leading-relaxed mb-2">{f.desc}</p>
+                  <span className="label-dt text-accent/70">{f.badge}</span>
+                </div>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* ── PRICING ── */}
-        <section className="relative z-10 bg-light-surface/50 dark:bg-dark-surface/50 border-y border-light-text/8 dark:border-dark-text/8 py-24 px-6">
-          <div className="max-w-5xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              className="text-center mb-14">
-              <Badge variant="muted" className="mb-4">Tarifs</Badge>
-              <h2 className="font-syne text-3xl font-bold text-light-text dark:text-dark-text mb-3">
-                Simple et transparent
-              </h2>
-              <p className="text-light-text/50 dark:text-dark-text/50">
-                Commencez gratuitement. Évoluez selon vos besoins.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {pricing.map((plan, i) => (
-                <motion.div key={plan.name}
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}>
-                  <div className={cn(
-                    'relative flex flex-col h-full rounded-2xl border-2 p-6',
-                    'bg-light-surface dark:bg-dark-surface',
-                    plan.color,
-                    plan.badge && 'shadow-[0_0_30px_rgba(0,212,255,0.12)]'
-                  )}>
-                    {plan.badge && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span className="bg-accent text-black text-xs font-bold px-3 py-1 rounded-full">{plan.badge}</span>
-                      </div>
-                    )}
-
-                    <div className="mb-5">
-                      <h3 className="font-syne font-bold text-light-text dark:text-dark-text text-lg">{plan.name}</h3>
-                      <div className="flex items-baseline gap-1 mt-2">
-                        <span className="font-syne font-bold text-3xl text-light-text dark:text-dark-text">{plan.price}</span>
-                        {plan.period && <span className="text-xs text-light-text/45 dark:text-dark-text/45">{plan.period}</span>}
-                      </div>
-                      <p className="text-xs text-light-text/50 dark:text-dark-text/50 mt-1">{plan.desc}</p>
-                    </div>
-
-                    <ul className="space-y-2.5 flex-1 mb-6">
-                      {plan.features.map((feat) => (
-                        <li key={feat} className="flex items-start gap-2 text-sm text-light-text/75 dark:text-dark-text/75">
-                          <CheckCircle2 size={14} className="text-accent mt-0.5 flex-shrink-0" />
-                          {feat}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Link href={plan.href}>
-                      <Button variant={plan.ctaVariant} size="md" className="w-full">
-                        {plan.cta}
-                      </Button>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <PricingSection />
 
         {/* ── TÉMOIGNAGES ── */}
         <section className="relative z-10 max-w-5xl mx-auto px-6 py-24">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="text-center mb-12">
-            <Badge variant="muted" className="mb-4">Témoignages</Badge>
-            <h2 className="font-syne text-3xl font-bold text-light-text dark:text-dark-text">
-              Ils nous font confiance
-            </h2>
+            <p className="label-dt text-text-secondary mb-3">Témoignages</p>
+            <h2 className="font-display text-3xl font-light text-white">Ils nous font confiance</h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -304,20 +201,18 @@ export default function HomePage() {
               <motion.div key={t.name}
                 initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}>
-                <Card className="p-5 h-full">
+                <div className="bg-dark-surface border border-dark-border rounded-2xl p-5 h-full">
                   <div className="flex gap-0.5 mb-3">
                     {Array.from({ length: t.stars }).map((_, s) => (
-                      <Star key={s} size={13} className="text-amber-400 fill-amber-400" />
+                      <Star key={s} size={13} className="text-or fill-or" />
                     ))}
                   </div>
-                  <p className="text-sm text-light-text/70 dark:text-dark-text/70 leading-relaxed mb-4 italic">
-                    "{t.text}"
-                  </p>
+                  <p className="text-sm text-dark-text leading-relaxed mb-4 italic">"{t.text}"</p>
                   <div>
-                    <p className="text-sm font-semibold text-light-text dark:text-dark-text">{t.name}</p>
-                    <p className="text-xs text-light-text/40 dark:text-dark-text/40">{t.role}</p>
+                    <p className="text-sm font-semibold text-white font-sans">{t.name}</p>
+                    <p className="text-xs text-text-secondary">{t.role}</p>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -326,20 +221,20 @@ export default function HomePage() {
         {/* ── CTA FINAL ── */}
         <section className="relative z-10 px-6 pb-24">
           <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="max-w-2xl mx-auto text-center bg-accent/5 border border-accent/20 rounded-3xl px-8 py-14">
-            <div className="w-14 h-14 rounded-2xl bg-accent/15 text-accent flex items-center justify-center mx-auto mb-5">
+            className="max-w-2xl mx-auto text-center border border-or/20 bg-or/3 rounded-3xl px-8 py-14">
+            <div className="w-14 h-14 rounded-2xl bg-or/10 text-or flex items-center justify-center mx-auto mb-5">
               <Zap size={26} />
             </div>
-            <h2 className="font-syne text-3xl font-bold text-light-text dark:text-dark-text mb-3">
+            <h2 className="font-display text-3xl font-light text-white mb-3">
               Prêt à transformer vos formations ?
             </h2>
-            <p className="text-light-text/55 dark:text-dark-text/55 mb-8">
-              Rejoignez les formateurs africains qui ont déjà adopté TrainDeck pour leurs équipes.
+            <p className="font-display text-lg text-or mb-2">DeckTrain — Fait pour l'Afrique, par l'Afrique.</p>
+            <p className="text-sm text-text-secondary mb-8">
+              Rejoignez les formateurs africains qui ont déjà adopté DeckTrain.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/login">
-                <Button size="lg" variant="primary" className="shadow-[0_0_24px_rgba(0,212,255,0.3)]">
+                <Button size="lg" variant="primary" className="shadow-[0_0_20px_rgba(0,212,255,0.25)]">
                   Commencer maintenant
                   <ArrowRight size={16} />
                 </Button>

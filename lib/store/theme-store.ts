@@ -16,6 +16,6 @@ export const useThemeStore = create<ThemeStore>()(
       toggle: () => set((state) => ({ isDark: !state.isDark })),
       setDark: (dark) => set({ isDark: dark }),
     }),
-    { name: 'traindeck-theme' }
+    { name: 'decktrain-theme' }
   )
 )

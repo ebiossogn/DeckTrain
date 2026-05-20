@@ -12,9 +12,10 @@ interface Props {
   dragHandleProps?: Record<string, unknown>
   onEdit: () => void
   onDelete: () => void
+  liveCode?: string | null
 }
 
-export function ModuleCard({ module, dragHandleProps, onEdit, onDelete }: Props) {
+export function ModuleCard({ module, dragHandleProps, onEdit, onDelete, liveCode }: Props) {
   return (
     <div className="flex items-center gap-3 p-4 rounded-2xl border border-light-text/8 dark:border-dark-text/8 bg-light-surface dark:bg-dark-surface hover:border-accent/20 transition-colors group">
       {/* Drag handle */}
@@ -27,13 +28,19 @@ export function ModuleCard({ module, dragHandleProps, onEdit, onDelete }: Props)
 
       {/* Contenu principal */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <h3 className="font-syne font-semibold text-light-text dark:text-dark-text truncate">
             {module.title}
           </h3>
           <Badge variant="muted" className="text-[10px] flex-shrink-0">
             <Layers size={9} /> {module._count.slides} slide{module._count.slides !== 1 ? 's' : ''}
           </Badge>
+          {liveCode && (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/12 text-red-400 text-[10px] font-semibold flex-shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              LIVE · {liveCode}
+            </span>
+          )}
         </div>
         {module.description && (
           <p className="text-xs text-light-text/45 dark:text-dark-text/45 truncate">{module.description}</p>

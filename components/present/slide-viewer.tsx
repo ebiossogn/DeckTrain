@@ -5,11 +5,12 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronLeft, ChevronRight, Maximize2, Minimize2,
-  FileText, LayoutGrid, Timer, Home, X,
+  FileText, LayoutGrid, Timer, Home, X, Radio,
 } from 'lucide-react'
 import type { SlideWithContent, TransitionType } from '@/types/slides'
 import { SLIDE_TYPE_LABELS } from '@/types/slides'
 import { SlideRenderer } from '@/components/slides/slide-renderer'
+import { LiveModal } from '@/components/live/live-modal'
 import { cn } from '@/lib/utils'
 
 /* ── Variants par type de transition ── */
@@ -172,27 +173,58 @@ interface Props {
   moduleId: string
   moduleTitle: string
   slides: SlideWithContent[]
+  liveCode?: string | null
 }
 
-export function SlideViewer({ moduleId, moduleTitle, slides }: Props) {
+export function SlideViewer({ moduleId, moduleTitle, slides, liveCode }: Props) {
   const [idx, setIdx] = useState(0)
   const [dir, setDir] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [presenterMode, setPresenterMode] = useState(false)
   const [showThumbs, setShowThumbs] = useState(false)
   const [showControls, setShowControls] = useState(true)
+  const [liveViewers, setLiveViewers] = useState<number | null>(null)
+  const [showLiveModal, setShowLiveModal] = useState(false)
 
   const idxRef = useRef(idx)
   idxRef.current = idx
   const lenRef = useRef(slides.length)
   lenRef.current = slides.length
 
+  // Synchroniser le slide courant vers la session live
+  const syncLive = useCallback(async (slideIndex: number) => {
+    if (!liveCode) return
+    fetch(`/api/live/${liveCode}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentSlideIndex: slideIndex }),
+    }).catch(() => null)
+  }, [liveCode])
+
+  // Polling du compteur de participants live (toutes les 5s)
+  useEffect(() => {
+    if (!liveCode) return
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/live/${liveCode}`)
+        if (res.ok) {
+          const data = await res.json()
+          setLiveViewers(data.viewerCount ?? 0)
+        }
+      } catch { /* silencieux */ }
+    }
+    poll()
+    const id = setInterval(poll, 5000)
+    return () => clearInterval(id)
+  }, [liveCode])
+
   const goTo = useCallback((next: number) => {
     if (next < 0 || next >= lenRef.current) return
     setDir(next > idxRef.current ? 1 : -1)
     setIdx(next)
     setShowControls(true)
-  }, [])
+    syncLive(next)
+  }, [syncLive])
 
   const goNext = useCallback(() => goTo(idxRef.current + 1), [goTo])
   const goPrev = useCallback(() => goTo(idxRef.current - 1), [goTo])
@@ -313,7 +345,7 @@ export function SlideViewer({ moduleId, moduleTitle, slides }: Props) {
         onMouseEnter={() => setShowControls(true)}
       >
         <div className="pointer-events-auto flex items-center justify-between px-6 py-3 bg-gradient-to-t from-black/70 to-transparent">
-          {/* Gauche : home + module */}
+          {/* Gauche : home + module + badge live */}
           <div className="flex items-center gap-3">
             <Link
               href="/present"
@@ -323,6 +355,24 @@ export function SlideViewer({ moduleId, moduleTitle, slides }: Props) {
               <Home size={14} />
             </Link>
             <span className="text-xs text-dark-text/40 hidden md:block truncate max-w-48">{moduleTitle}</span>
+            {liveCode ? (
+              <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-red-500/15 border border-red-500/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                <span className="text-[10px] font-mono text-red-400">{liveCode}</span>
+                {liveViewers !== null && (
+                  <span className="text-[10px] text-red-400/60">{liveViewers} viewer{liveViewers !== 1 ? 's' : ''}</span>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLiveModal(true)}
+                title="Présenter en live"
+                className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/8 text-dark-text/60 hover:bg-red-500/15 hover:text-red-400 transition-colors text-[10px] font-medium"
+              >
+                <Radio size={12} />
+                Live
+              </button>
+            )}
           </div>
 
           {/* Centre : prev / counter / timer / next */}
@@ -390,6 +440,17 @@ export function SlideViewer({ moduleId, moduleTitle, slides }: Props) {
       <div className="absolute bottom-16 right-4 text-[10px] text-white/15 pointer-events-none select-none font-inter tracking-wide z-30">
         © CHRIST J.
       </div>
+
+      {/* ── Modal live (démarrer une session depuis la présentation) ── */}
+      <AnimatePresence>
+        {showLiveModal && (
+          <LiveModal
+            moduleId={moduleId}
+            moduleTitle={moduleTitle}
+            onClose={() => setShowLiveModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -39,6 +39,8 @@ export async function POST(req: Request) {
       password: hashed,
       type,
       isActive: true,
+      tempPassword: true,
+      emailVerified: true,
       moduleIds: moduleIds ? JSON.stringify(moduleIds) : null,
     },
     select: { id: true, email: true, name: true, type: true, isActive: true, moduleIds: true, createdAt: true },

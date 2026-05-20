@@ -10,9 +10,12 @@ import { ModuleCard } from './module-card'
 import { ModuleFormModal } from './module-form-modal'
 import type { ModuleWithCount } from '@/types/slides'
 
-interface Props { initialModules: ModuleWithCount[] }
+interface Props {
+  initialModules: ModuleWithCount[]
+  liveMap?: Record<string, string>
+}
 
-export function ModulesClient({ initialModules }: Props) {
+export function ModulesClient({ initialModules, liveMap = {} }: Props) {
   const [modules, setModules] = useState<ModuleWithCount[]>(initialModules)
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<ModuleWithCount | null>(null)
@@ -105,6 +108,7 @@ export function ModulesClient({ initialModules }: Props) {
                           dragHandleProps={drag.dragHandleProps as unknown as Record<string, unknown>}
                           onEdit={() => openEdit(m)}
                           onDelete={() => handleDelete(m.id)}
+                          liveCode={liveMap[m.id] ?? null}
                         />
                       </motion.div>
                     )}

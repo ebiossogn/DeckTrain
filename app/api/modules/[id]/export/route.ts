@@ -30,9 +30,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }))
 
   if (format === 'pptx') {
-    const buffer = await generatePptx(module.title, slides)
+    let buffer: Buffer
+    try {
+      buffer = await generatePptx(module.title, slides)
+    } catch (e) {
+      console.error('[PPTX] generatePptx failed:', e)
+      return NextResponse.json({ error: 'Erreur génération PPTX', detail: String(e) }, { status: 500 })
+    }
     const safe = module.title.replace(/[^a-z0-9]/gi, '_').slice(0, 50)
-    return new Response(buffer as unknown as BodyInit, {
+    return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'Content-Disposition': `attachment; filename="${safe}.pptx"`,

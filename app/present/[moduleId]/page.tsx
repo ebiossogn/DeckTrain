@@ -6,8 +6,10 @@ import type { SlideWithContent, TitleCodeContent } from '@/types/slides'
 
 export default async function PresentModulePage({
   params,
+  searchParams,
 }: {
   params: { moduleId: string }
+  searchParams: { liveCode?: string }
 }) {
   const module = await prisma.module.findUnique({
     where: { id: params.moduleId },
@@ -15,7 +17,6 @@ export default async function PresentModulePage({
   })
   if (!module) notFound()
 
-  /* Pré-rendu Shiki des slides code (côté serveur) */
   const slides: SlideWithContent[] = await Promise.all(
     module.slides.map(async (s) => {
       const content = JSON.parse(s.content) as Record<string, unknown>
@@ -27,9 +28,7 @@ export default async function PresentModulePage({
             lang: language || 'text',
             theme: 'github-dark',
           })
-        } catch {
-          /* langage inconnu → fallback sans coloration */
-        }
+        } catch { /* langage inconnu → fallback */ }
       }
 
       return {
@@ -51,6 +50,7 @@ export default async function PresentModulePage({
       moduleId={module.id}
       moduleTitle={module.title}
       slides={slides}
+      liveCode={searchParams.liveCode ?? null}
     />
   )
 }

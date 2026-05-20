@@ -9,31 +9,55 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        accent: '#00D4FF',
-        'dark-bg': '#0A0A0F',
-        'dark-surface': '#12121A',
-        'light-bg': '#F8FAFF',
+        /* ── Interactif (cyan) ── */
+        accent:        '#00D4FF',
+        'accent-dark': '#0099BB',
+
+        /* ── Institutionnel (or) ── */
+        or:            '#C8B89A',
+        'or-profond':  '#A89070',
+
+        /* ── Fonds dark ── */
+        'dark-bg':      '#111111',
+        'dark-surface': '#1C1C1C',
+        'dark-border':  '#2E2E2E',
+
+        /* ── Fonds light ── */
+        'light-bg':      '#F5F5F2',
         'light-surface': '#FFFFFF',
-        'dark-text': '#E8F4FF',
-        'light-text': '#0D1117',
+        'light-border':  '#E0E0E0',
+
+        /* ── Textes ── */
+        'dark-text':      '#CCCCCC',
+        'light-text':     '#111111',
+        'text-secondary': '#888888',
+        'text-muted':     '#555555',
       },
       fontFamily: {
-        syne: ['Syne', 'ui-sans-serif', 'sans-serif'],
-        inter: ['Inter', 'ui-sans-serif', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        /* Charte DeckTrain */
+        'display': ['Cormorant Garamond', 'Georgia', 'serif'],
+        'sans':    ['DM Sans', 'Arial', 'sans-serif'],
+        'mono':    ['JetBrains Mono', 'Courier New', 'monospace'],
+        /* Aliases */
+        'serif':   ['Cormorant Garamond', 'Georgia', 'serif'],
+        'body':    ['DM Sans', 'Arial', 'sans-serif'],
+        'code':    ['JetBrains Mono', 'Courier New', 'monospace'],
+        /* Legacy mappings — anciens noms maintenus pour les classes existantes */
+        'syne':    ['Cormorant Garamond', 'Georgia', 'serif'],
+        'inter':   ['DM Sans', 'Arial', 'sans-serif'],
       },
       animation: {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        float: 'float 6s ease-in-out infinite',
+        float:        'float 6s ease-in-out infinite',
       },
       keyframes: {
         'pulse-glow': {
           '0%, 100%': { boxShadow: '0 0 8px rgba(0,212,255,0.3)' },
-          '50%': { boxShadow: '0 0 28px rgba(0,212,255,0.7)' },
+          '50%':      { boxShadow: '0 0 28px rgba(0,212,255,0.7)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-12px)' },
+          '50%':      { transform: 'translateY(-12px)' },
         },
       },
     },

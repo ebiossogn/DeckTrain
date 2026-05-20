@@ -25,7 +25,7 @@ interface Survey {
   questions: Question[]
 }
 
-const RESPONDENT_KEY = 'td_respondent_id'
+const RESPONDENT_KEY = 'dt_respondent_id'
 function getRespondentId(): string {
   if (typeof window === 'undefined') return ''
   let id = localStorage.getItem(RESPONDENT_KEY)

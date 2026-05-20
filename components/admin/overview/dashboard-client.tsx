@@ -145,7 +145,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
           Vue d'ensemble
         </h1>
         <p className="text-light-text/50 dark:text-dark-text/50">
-          Bienvenue dans le back-office TrainDeck — tableau de bord de formation.
+          Bienvenue dans le back-office DeckTrain — tableau de bord de formation.
         </p>
       </motion.div>
 

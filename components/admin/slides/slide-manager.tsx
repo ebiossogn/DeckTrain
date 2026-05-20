@@ -5,16 +5,19 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { Plus, Loader2, Save, ArrowLeft, Clock, FileText, Layers, SlidersHorizontal, Zap, FileDown, Printer } from 'lucide-react'
+import { Plus, Loader2, Save, ArrowLeft, Clock, FileText, Layers, SlidersHorizontal, Zap, FileDown, Printer, Upload, Sparkles } from 'lucide-react'
 import type { SlideWithContent, SlideType, SlideContent, TransitionType } from '@/types/slides'
 import { getDefaultContent, TRANSITION_LABELS } from '@/types/slides'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
 import { SlideEditor } from './slide-editor'
 import { SlideTypeSelector } from './slide-type-selector'
 import { SlideThumbnail } from './slide-thumbnail'
+import { ImportModal } from './import-modal'
+import { AIGeneratorModal } from './ai-generator'
 
 interface Module { id: string; title: string; description: string | null }
 
@@ -31,6 +34,8 @@ export function SlideManager({ module, initialSlides }: Props) {
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [editingSlide, setEditingSlide] = useState<SlideWithContent | null>(initialSlides[0] ?? null)
+  const [showImport, setShowImport]   = useState(false)
+  const [showAI, setShowAI]           = useState(false)
 
   const selectSlide = (slide: SlideWithContent) => {
     setSelectedId(slide.id)
@@ -155,23 +160,39 @@ export function SlideManager({ module, initialSlides }: Props) {
             </a>
             <button
               onClick={async () => {
-                const res = await fetch(`/api/modules/${module.id}/export?format=pptx`)
-                if (!res.ok) return
-                const blob = await res.blob()
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url; a.download = `${module.title}.pptx`; a.click()
-                URL.revokeObjectURL(url)
+                const tid = toast.loading('Génération PPTX…')
+                try {
+                  const res = await fetch(`/api/modules/${module.id}/export?format=pptx`)
+                  if (!res.ok) throw new Error(await res.text())
+                  const blob = await res.blob()
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url; a.download = `${module.title}.pptx`; a.click()
+                  URL.revokeObjectURL(url)
+                  toast.success('PPTX téléchargé', { id: tid })
+                } catch (e) {
+                  console.error('[PPTX export]', e)
+                  toast.error(`Export PPTX échoué${e instanceof Error ? ': ' + e.message : ''}`, { id: tid })
+                }
               }}
-              className="flex items-center gap-1 text-[10px] text-light-text/45 dark:text-dark-text/45 hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-accent/8"
+              className="flex items-center gap-1 text-[10px] text-text-secondary hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-accent/8"
             >
               <FileDown size={11} /> PPTX
             </button>
           </div>
         </div>
 
-        {/* Bouton nouveau slide */}
-        <div className="px-3 py-3 border-b border-light-text/8 dark:border-dark-text/8">
+        {/* Boutons création */}
+        <div className="px-3 py-3 border-b border-light-text/8 dark:border-dark-text/8 space-y-1.5">
+          {/* Bouton IA — le plus visible */}
+          <button
+            onClick={() => { setIsPickingType(false); setShowAI(true) }}
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-dark-bg transition-opacity hover:opacity-90 shadow-sm"
+            style={{ background: 'linear-gradient(135deg, #00D4FF 0%, #8b5cf6 100%)' }}
+          >
+            <Sparkles size={13} />
+            Générer avec l'IA
+          </button>
           <Button
             variant={isPickingType ? 'secondary' : 'primary'}
             size="sm"
@@ -180,6 +201,15 @@ export function SlideManager({ module, initialSlides }: Props) {
           >
             <Plus size={13} />
             {isPickingType ? 'Annuler' : 'Nouveau slide'}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={() => { setIsPickingType(false); setShowImport(true) }}
+          >
+            <Upload size={13} />
+            Importer un fichier
           </Button>
         </div>
 
@@ -318,11 +348,12 @@ export function SlideManager({ module, initialSlides }: Props) {
                 <select
                   value={editingSlide.transition ?? ''}
                   onChange={(e) => handleTransitionChange(e.target.value as TransitionType | '')}
-                  className="flex-1 max-w-xs rounded-lg px-3 py-1.5 text-sm bg-light-text/5 dark:bg-dark-text/5 border border-light-text/10 dark:border-dark-text/10 text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all"
+                  className="flex-1 max-w-xs rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all"
+                  style={{ background: '#1C1C1C', color: '#CCCCCC', border: '1px solid #2E2E2E' }}
                 >
-                  <option value="">— Par défaut (glissement)</option>
+                  <option value="" style={{ background: '#1C1C1C', color: '#CCCCCC' }}>— Par défaut (glissement)</option>
                   {(Object.keys(TRANSITION_LABELS) as TransitionType[]).map((t) => (
-                    <option key={t} value={t}>{TRANSITION_LABELS[t]}</option>
+                    <option key={t} value={t} style={{ background: '#1C1C1C', color: '#CCCCCC' }}>{TRANSITION_LABELS[t]}</option>
                   ))}
                 </select>
               </div>
@@ -351,6 +382,44 @@ export function SlideManager({ module, initialSlides }: Props) {
           )}
         </AnimatePresence>
       </main>
+
+      {/* ── Modal IA ── */}
+      <AnimatePresence>
+        {showAI && (
+          <AIGeneratorModal
+            moduleId={module.id}
+            onClose={() => setShowAI(false)}
+            onSuccess={(generated) => {
+              setSlides((prev) => [...prev, ...generated])
+              if (generated.length > 0 && !editingSlide) selectSlide(generated[0])
+              setShowAI(false)
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal import ── */}
+      <AnimatePresence>
+        {showImport && (
+          <ImportModal
+            moduleId={module.id}
+            onClose={() => setShowImport(false)}
+            onSuccess={(imported, importMode) => {
+              if (importMode === 'replace') {
+                setSlides(imported)
+                setSelectedId(imported[0]?.id ?? null)
+                setEditingSlide(imported[0] ? { ...imported[0] } : null)
+                setIsDirty(false)
+              } else {
+                setSlides((prev) => [...prev, ...imported])
+                if (imported.length > 0 && !editingSlide) selectSlide(imported[0])
+              }
+              setShowImport(false)
+              toast.success(`${imported.length} slide${imported.length !== 1 ? 's' : ''} importée${imported.length !== 1 ? 's' : ''} !`)
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

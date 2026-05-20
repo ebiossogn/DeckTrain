@@ -93,7 +93,7 @@ export function getDefaultContent(type: SlideType): SlideContent {
   switch (type) {
     case 'title-text':    return { title: 'Titre du slide', body: '<p>Contenu du slide.</p>' }
     case 'title-image':   return { title: 'Titre du slide', imageUrl: '', altText: '', position: 'center' }
-    case 'title-code':    return { title: 'Exemple de code', code: '// Votre code ici\nconsole.log("Hello, TrainDeck!")\n', language: 'javascript' }
+    case 'title-code':    return { title: 'Exemple de code', code: '// Votre code ici\nconsole.log("Hello, DeckTrain!")\n', language: 'javascript' }
     case 'title-bullets': return { title: 'Points clés', bullets: [{ id: uid(), text: 'Premier point' }, { id: uid(), text: 'Deuxième point' }] }
     case 'quote':         return { quote: 'Votre citation inspirante ici.', author: 'Auteur', background: 'cyan' }
     case 'comparison':    return { leftTitle: 'Avant', leftContent: '<p>Situation initiale</p>', rightTitle: 'Après', rightContent: '<p>Situation améliorée</p>', dividerLabel: 'VS' }

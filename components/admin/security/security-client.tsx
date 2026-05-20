@@ -222,7 +222,7 @@ export function SecurityClient({ initial }: { initial: SecurityData }) {
                       <td className="py-2.5 px-2 text-light-text/35 dark:text-dark-text/35 hidden md:table-cell max-w-[200px] truncate">
                         {log.userAgent?.split(' ')[0] ?? '—'}
                       </td>
-                      <td className="py-2.5 px-2 text-light-text/45 dark:text-dark-text/45 whitespace-nowrap">
+                      <td className="py-2.5 px-2 text-light-text/45 dark:text-dark-text/45 whitespace-nowrap" suppressHydrationWarning>
                         {timeAgo(log.createdAt)}
                       </td>
                     </tr>

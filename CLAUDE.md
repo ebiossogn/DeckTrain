@@ -1,4 +1,4 @@
-# TrainDeck — Instructions pour Claude Code
+# DeckTrain — Instructions pour Claude Code
 
 ## Projet
 Application web de formation interactive (alternative à PowerPoint/Canva)

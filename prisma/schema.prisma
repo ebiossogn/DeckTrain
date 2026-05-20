@@ -8,27 +8,34 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(cuid())
-  email       String    @unique
-  name        String?
-  password    String
-  role        String    @default("JUNIOR_ADMIN")
-  permissions String?
-  isBlocked   Boolean   @default(false)
-  isActive    Boolean   @default(true)
-  lastLoginAt DateTime?
-  createdAt   DateTime  @default(now())
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
+  password           String
+  role               String    @default("JUNIOR_ADMIN")
+  permissions        String?
+  isBlocked          Boolean   @default(false)
+  isActive           Boolean   @default(true)
+  mustChangePassword Boolean   @default(false)
+  passwordChangedAt  DateTime?
+  lastLoginAt        DateTime?
+  createdAt          DateTime  @default(now())
 }
 
 model AppUser {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  password  String
-  type      String   @default("participant")
-  isActive  Boolean  @default(true)
-  moduleIds String?
-  createdAt DateTime @default(now())
+  id                      String    @id @default(cuid())
+  email                   String    @unique
+  name                    String
+  password                String
+  type                    String    @default("participant")
+  isActive                Boolean   @default(true)
+  emailVerified           Boolean   @default(false)
+  verificationToken       String?
+  verificationTokenExpiry DateTime?
+  googleId                String?   @unique
+  tempPassword            Boolean   @default(false)
+  moduleIds               String?
+  createdAt               DateTime  @default(now())
 }
 
 model LoginLog {
@@ -41,15 +48,32 @@ model LoginLog {
 }
 
 model Module {
-  id          String          @id @default(cuid())
-  title       String
-  description String?
-  order       Int
-  slides      Slide[]
-  exercises   Exercise[]
-  sessions    AgendaSession[]
-  resources   Resource[]
-  createdAt   DateTime        @default(now())
+  id           String          @id @default(cuid())
+  title        String
+  description  String?
+  order        Int
+  slides       Slide[]
+  exercises    Exercise[]
+  sessions     AgendaSession[]
+  resources    Resource[]
+  liveSessions LiveSession[]
+  createdAt    DateTime        @default(now())
+}
+
+model LiveSession {
+  id                String    @id @default(cuid())
+  code              String    @unique
+  moduleId          String
+  module            Module    @relation(fields: [moduleId], references: [id])
+  hostId            String
+  currentSlideIndex Int       @default(0)
+  isActive          Boolean   @default(true)
+  isBlurred         Boolean   @default(false)
+  isBlackScreen     Boolean   @default(false)
+  viewerCount       Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  endedAt           DateTime?
 }
 
 model Slide {

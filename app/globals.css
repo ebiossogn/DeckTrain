@@ -1,9 +1,24 @@
-/* Fonts — graceful fallback si hors ligne (WSL) */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+/* ── Polices DeckTrain — Cormorant Garamond + DM Sans + JetBrains Mono ── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Variables CSS ── */
+:root {
+  --color-dark-bg:       #111111;
+  --color-dark-surface:  #1C1C1C;
+  --color-or-sable:      #C8B89A;
+  --color-or-profond:    #A89070;
+  --color-ivoire:        #F5F5F2;
+  --color-accent:        #00D4FF;
+  --color-accent-dark:   #0099BB;
+  --color-border:        #2E2E2E;
+  --color-text-primary:  #CCCCCC;
+  --color-text-secondary:#888888;
+  --color-text-muted:    #555555;
+}
 
 @layer base {
   html {
@@ -13,95 +28,152 @@
 
   body {
     @apply bg-light-bg text-light-text dark:bg-dark-bg dark:text-dark-text;
-    @apply font-inter antialiased;
+    @apply font-sans antialiased;
     @apply transition-colors duration-300;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-text-primary);
   }
 
-  /* Scrollbar personnalisée */
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+  /* ── Hiérarchie typographique DeckTrain ── */
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
   }
-  ::-webkit-scrollbar-track {
-    background: transparent;
+  h2 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 400;
+    color: #FFFFFF;
   }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-accent/25 rounded-full;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-accent/50;
+  h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    color: #C8B89A;
   }
 
-  /* Sélection de texte */
-  ::selection {
-    @apply bg-accent/25 text-accent;
-  }
+  /* ── Scrollbar personnalisée ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(200,184,154,0.2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(200,184,154,0.45); }
+
+  /* ── Sélection ── */
+  ::selection { background: rgba(0,212,255,0.2); color: #00D4FF; }
 }
 
-/* Styles de l'éditeur Tiptap */
+/* ── Selects natifs — toujours lisibles en dark ── */
+select {
+  background-color: #1C1C1C;
+  color: #CCCCCC;
+  border-color: #2E2E2E;
+}
+select option {
+  background-color: #1C1C1C;
+  color: #CCCCCC;
+}
+select option:checked,
+select option:hover {
+  background-color: #00D4FF;
+  color: #111111;
+}
+
+/* ── Tiptap editor ── */
 .tiptap-content .ProseMirror { outline: none; }
 .tiptap-content .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  float: left;
-  pointer-events: none;
-  height: 0;
-  color: rgba(13,17,23,0.3);
-}
-.dark .tiptap-content .ProseMirror p.is-editor-empty:first-child::before {
-  color: rgba(232,244,255,0.3);
+  float: left; pointer-events: none; height: 0;
+  color: rgba(136,136,136,0.5);
 }
 .tiptap-content .ProseMirror > * + * { margin-top: 0.4rem; }
 .tiptap-content .ProseMirror ul { list-style-type: disc; padding-left: 1.4rem; }
 .tiptap-content .ProseMirror ol { list-style-type: decimal; padding-left: 1.4rem; }
-.tiptap-content .ProseMirror h2 { font-size: 1.25rem; font-weight: 700; font-family: 'Syne', sans-serif; }
-.tiptap-content .ProseMirror h3 { font-size: 1.1rem; font-weight: 600; font-family: 'Syne', sans-serif; }
+.tiptap-content .ProseMirror h2 {
+  font-size: 1.25rem; font-weight: 400;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.tiptap-content .ProseMirror h3 {
+  font-size: 1.1rem; font-weight: 600;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #C8B89A;
+}
 .tiptap-content .ProseMirror strong { font-weight: 600; }
 .tiptap-content .ProseMirror em { font-style: italic; }
 .tiptap-content .ProseMirror blockquote {
-  border-left: 3px solid rgba(0,212,255,0.4);
-  padding-left: 1rem;
-  opacity: 0.7;
-  font-style: italic;
+  border-left: 3px solid rgba(200,184,154,0.4);
+  padding-left: 1rem; opacity: 0.75; font-style: italic;
 }
 .tiptap-content .ProseMirror code {
-  font-family: 'JetBrains Mono', monospace;
-  background: rgba(0,212,255,0.1);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: rgba(0,212,255,0.08);
   color: #00D4FF;
-  padding: 0.1rem 0.35rem;
-  border-radius: 0.3rem;
-  font-size: 0.85em;
+  padding: 0.1rem 0.35rem; border-radius: 0.3rem; font-size: 0.85em;
 }
 
-/* Styles des slides en mode présentation */
+/* ── Slides en présentation ── */
 .prose-presentation ul { list-style-type: disc; padding-left: 1.5rem; }
 .prose-presentation ol { list-style-type: decimal; padding-left: 1.5rem; }
 .prose-presentation li + li { margin-top: 0.5rem; }
-.prose-presentation h2 { font-size: 1.5rem; font-weight: 700; font-family: 'Syne', sans-serif; margin-bottom: 0.5rem; }
-.prose-presentation h3 { font-size: 1.25rem; font-weight: 600; font-family: 'Syne', sans-serif; margin-bottom: 0.4rem; }
+.prose-presentation h2 {
+  font-size: 1.5rem; font-weight: 400;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  margin-bottom: 0.5rem;
+}
+.prose-presentation h3 {
+  font-size: 1.25rem; font-weight: 600;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #C8B89A; margin-bottom: 0.4rem;
+}
 .prose-presentation strong { font-weight: 700; }
 .prose-presentation em { font-style: italic; }
 .prose-presentation p + p { margin-top: 0.75rem; }
-.prose-presentation blockquote { border-left: 3px solid rgba(0,212,255,0.4); padding-left: 1rem; opacity: 0.75; font-style: italic; }
-.prose-presentation code { font-family: 'JetBrains Mono', monospace; background: rgba(0,212,255,0.12); color: #00D4FF; padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.85em; }
+.prose-presentation blockquote {
+  border-left: 3px solid rgba(200,184,154,0.4);
+  padding-left: 1rem; opacity: 0.75; font-style: italic;
+}
+.prose-presentation code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: rgba(0,212,255,0.1); color: #00D4FF;
+  padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.85em;
+}
 
-/* Shiki output override pour la présentation */
+/* ── Shiki ── */
 .shiki-output pre { background: transparent !important; padding: 0 !important; }
 .shiki-output code { background: transparent !important; }
 
 @layer utilities {
   .glow-accent {
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0,212,255,0.35);
   }
   .glow-accent-lg {
-    box-shadow: 0 0 40px rgba(0, 212, 255, 0.25);
+    box-shadow: 0 0 40px rgba(0,212,255,0.2);
+  }
+  .glow-or {
+    box-shadow: 0 0 20px rgba(200,184,154,0.3);
   }
   .text-gradient {
     @apply bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent;
+  }
+  .text-gradient-or {
+    background: linear-gradient(135deg, #C8B89A, #A89070);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .glass {
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
   .border-subtle {
-    @apply border-light-text/8 dark:border-dark-text/8;
+    border-color: rgba(46,46,46,0.8);
+  }
+  /* Label style DeckTrain */
+  .label-dt {
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
   }
 }

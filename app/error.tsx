@@ -35,9 +35,9 @@ export default function GlobalError({
 
         <div className="flex items-center justify-center gap-2 -mt-2">
           <div className="w-8 h-8 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center">
-            <span className="font-syne font-bold text-accent text-xs">TD</span>
+            <span className="font-display font-bold text-accent text-xs">DT</span>
           </div>
-          <span className="font-syne font-bold text-dark-text text-lg tracking-tight">TrainDeck</span>
+          <span className="font-display font-bold text-white">Deck</span><span className="font-display font-bold text-or">Train</span>
         </div>
 
         <div>
@@ -69,7 +69,7 @@ export default function GlobalError({
       </motion.div>
 
       <div className="absolute bottom-6 text-xs text-dark-text/20 font-inter">
-        © CHRIST J. — TrainDeck
+        © CHRIST J. — DeckTrain
       </div>
     </div>
   )

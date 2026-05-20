@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       role,
       permissions: role === 'CUSTOM_ADMIN' ? JSON.stringify(permissions ?? []) : null,
       isActive: true,
+      mustChangePassword: true,
     },
     select: { id: true, email: true, name: true, role: true, createdAt: true },
   })

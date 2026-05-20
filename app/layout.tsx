@@ -5,8 +5,8 @@ import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/components/providers/session-provider'
 
 export const metadata: Metadata = {
-  title: 'TrainDeck — Plateforme de formation interactive',
-  description: 'Plateforme de formation interactive pour équipe IT — Mai 2026',
+  title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
+  description: 'Plateforme tout-en-un : slides interactives, exercices, sondages en direct et agenda. Alternative à PowerPoint pensée pour les formateurs africains.',
   icons: { icon: '/favicon.svg' },
 }
 
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Toaster
           position="bottom-right"
           toastOptions={{
-            style: { background: '#12121A', border: '1px solid rgba(232,244,255,0.1)', color: '#E8F4FF' },
+            style: { background: '#1C1C1C', border: '1px solid rgba(46,46,46,0.9)', color: '#CCCCCC' },
           }}
         />
       </body>
