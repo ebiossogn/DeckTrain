@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams()
   const verified = searchParams.get('verified') === '1'
   const tokenError = searchParams.get('error')
@@ -242,5 +242,17 @@ export default function LoginPage() {
         © CHRIST J. — Tous droits réservés
       </motion.p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }
