@@ -6,6 +6,7 @@ import { CheckCircle, XCircle, ChevronDown, ChevronUp, Lightbulb, RotateCcw } fr
 import { cn } from '@/lib/utils'
 import { DIFFICULTY_LABELS, DIFFICULTY_COLORS } from '@/types/exercises'
 import type { ExerciseWithContent, QcmContent, AtelierContent } from '@/types/exercises'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 /* ── Carte QCM interactive ── */
 function QcmCard({
@@ -160,7 +161,7 @@ function AtelierCard({
       <div className="px-6 py-4">
         <div
           className="prose-presentation text-sm text-light-text/80 dark:text-dark-text/80 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: content.description }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.description) }}
         />
       </div>
 

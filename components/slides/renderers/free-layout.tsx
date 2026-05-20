@@ -1,4 +1,5 @@
 import type { FreeLayoutContent } from '@/types/slides'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 export function FreeLayoutSlide({ content }: { content: FreeLayoutContent }) {
   return (
@@ -9,7 +10,7 @@ export function FreeLayoutSlide({ content }: { content: FreeLayoutContent }) {
       <div className="w-20 h-1 bg-accent rounded-full mb-8 flex-shrink-0" />
       <div
         className="font-inter text-lg xl:text-xl text-dark-text/80 leading-relaxed prose-presentation"
-        dangerouslySetInnerHTML={{ __html: content.body }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.body) }}
       />
     </div>
   )

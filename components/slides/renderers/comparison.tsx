@@ -1,4 +1,5 @@
 import type { ComparisonContent } from '@/types/slides'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 export function ComparisonSlide({ content }: { content: ComparisonContent }) {
   return (
@@ -11,7 +12,7 @@ export function ComparisonSlide({ content }: { content: ComparisonContent }) {
         <div className="w-12 h-1 bg-accent/40 rounded-full mb-6" />
         <div
           className="font-inter text-lg xl:text-xl text-dark-text/75 leading-relaxed prose-presentation"
-          dangerouslySetInnerHTML={{ __html: content.leftContent }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.leftContent) }}
         />
       </div>
 
@@ -34,7 +35,7 @@ export function ComparisonSlide({ content }: { content: ComparisonContent }) {
         <div className="w-12 h-1 bg-accent rounded-full mb-6" />
         <div
           className="font-inter text-lg xl:text-xl text-dark-text/75 leading-relaxed prose-presentation"
-          dangerouslySetInnerHTML={{ __html: content.rightContent }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.rightContent) }}
         />
       </div>
     </div>

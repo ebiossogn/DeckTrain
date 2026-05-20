@@ -8,6 +8,7 @@ import {
   MapPin, Clock, Monitor, X, ExternalLink,
 } from 'lucide-react'
 import { Modal } from '@/components/ui/modal'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { cn } from '@/lib/utils'
 import { TYPE_CONFIG, STATUS_CONFIG_PUBLIC, type AgendaEvent } from './agenda-types'
 
@@ -91,7 +92,7 @@ function EventDetailModal({ event, onClose }: { event: AgendaEvent; onClose: () 
         {event.description && (
           <div
             className="prose-presentation text-sm text-light-text/75 dark:text-dark-text/75 leading-relaxed p-3 rounded-xl bg-light-text/3 dark:bg-dark-text/3 border border-light-text/6 dark:border-dark-text/6"
-            dangerouslySetInnerHTML={{ __html: event.description }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description) }}
           />
         )}
 

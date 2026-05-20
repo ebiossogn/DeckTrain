@@ -1,6 +1,7 @@
 'use client'
 
 import { PrintButton } from './print-button'
+import { sanitizeHtml } from '@/lib/sanitize'
 import type { SlideWithContent } from '@/types/slides'
 import type {
   TitleTextContent, TitleImageContent, TitleCodeContent,
@@ -78,11 +79,11 @@ function SlideCard({ slide, index, total }: { slide: SlideWithContent; index: nu
         <div className="comparison-grid" style={{ flex: 1 }}>
           <div className="comp-left">
             <p className="comp-title" style={{ color: '#00D4FF' }}>{cp.leftTitle}</p>
-            <div className="comp-body" dangerouslySetInnerHTML={{ __html: cp.leftContent }} />
+            <div className="comp-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(cp.leftContent) }} />
           </div>
           <div className="comp-right">
             <p className="comp-title" style={{ color: '#10b981' }}>{cp.rightTitle}</p>
-            <div className="comp-body" dangerouslySetInnerHTML={{ __html: cp.rightContent }} />
+            <div className="comp-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(cp.rightContent) }} />
           </div>
         </div>
         <div style={{ padding: '8px 16px' }}>{footer}</div>
@@ -136,7 +137,7 @@ function SlideCard({ slide, index, total }: { slide: SlideWithContent; index: nu
     <div className="slide-page">
       <div className="accent-bar" />
       <h2 className="slide-title" style={{ paddingLeft: 18 }}>{tt.title}</h2>
-      <div className="slide-body" dangerouslySetInnerHTML={{ __html: tt.body }} style={{ flex: 1, overflow: 'hidden' }} />
+      <div className="slide-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(tt.body) }} style={{ flex: 1, overflow: 'hidden' }} />
       {footer}
     </div>
   )

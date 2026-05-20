@@ -1,4 +1,5 @@
 import type { TitleTextContent } from '@/types/slides'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 type WithTheme = TitleTextContent & {
   _theme?: { background?: string; accent?: string; textColor?: string }
@@ -28,7 +29,7 @@ export function TitleTextSlide({ content }: { content: TitleTextContent }) {
         <div className="w-20 h-1 rounded-full mb-8" style={{ background: accent }} />
         <div
           className="font-inter text-xl xl:text-2xl text-dark-text/80 leading-relaxed prose-presentation"
-          dangerouslySetInnerHTML={{ __html: content.body }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.body) }}
         />
       </div>
     </div>
