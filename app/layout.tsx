@@ -7,7 +7,11 @@ import { AuthProvider } from '@/components/providers/session-provider'
 export const metadata: Metadata = {
   title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
   description: 'Plateforme tout-en-un : slides interactives, exercices, sondages en direct et agenda. Alternative à PowerPoint pensée pour les formateurs africains.',
-  icons: { icon: '/favicon.svg' },
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
