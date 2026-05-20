@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, User, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Mail, Lock, User, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -17,7 +17,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
-  const [done, setDone] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -45,7 +44,7 @@ export default function RegisterPage() {
       setError(data.error ?? 'Une erreur est survenue.')
       setLoading(false)
     } else {
-      setDone(true)
+      window.location.href = '/register/success?email=' + encodeURIComponent(email)
     }
   }
 
@@ -92,30 +91,7 @@ export default function RegisterPage() {
             <span className="text-light-text dark:text-white">Deck</span><span className="text-or">Train</span>
           </div>
 
-          <AnimatePresence mode="wait">
-            {done ? (
-              <motion.div
-                key="done"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center text-center gap-4 py-6"
-              >
-                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
-                  <CheckCircle2 size={32} className="text-accent" />
-                </div>
-                <h2 className="font-syne text-xl font-bold text-light-text dark:text-dark-text">
-                  Vérifiez votre boîte mail
-                </h2>
-                <p className="text-sm text-light-text/60 dark:text-dark-text/60 leading-relaxed">
-                  Un email de confirmation a été envoyé à <strong className="text-light-text dark:text-dark-text">{email}</strong>.
-                  Cliquez sur le lien pour activer votre compte.
-                </p>
-                <Link href="/login" className="text-sm text-accent hover:underline">
-                  Retour à la connexion
-                </Link>
-              </motion.div>
-            ) : (
-              <motion.div key="form" initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div>
                 <h1 className="font-syne text-2xl font-bold text-light-text dark:text-dark-text mb-1">
                   Créer un compte
                 </h1>
@@ -250,9 +226,8 @@ export default function RegisterPage() {
                     </Link>
                   </p>
                 </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </div>
+
         </div>
       </motion.div>
 

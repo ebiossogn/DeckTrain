@@ -9,6 +9,12 @@ export default withAuth(
     const userType = token?.userType
     const mustChangePwd = token?.mustChangePassword
 
+    // Page connexion admin — toujours accessible
+    if (path === '/admin/login') {
+      if (userType === 'admin') return NextResponse.redirect(`${base}/admin/overview`)
+      return NextResponse.next()
+    }
+
     // Forcer le changement de mot de passe
     if (mustChangePwd && path !== '/change-password') {
       return NextResponse.redirect(`${base}/change-password`)
@@ -37,7 +43,16 @@ export default withAuth(
 
     return NextResponse.next()
   },
-  { pages: { signIn: '/login' } }
+  {
+    pages: { signIn: '/login' },
+    callbacks: {
+      authorized: ({ req, token }) => {
+        // La page /admin/login est toujours accessible sans authentification
+        if (req.nextUrl.pathname === '/admin/login') return true
+        return !!token
+      },
+    },
+  }
 )
 
 export const config = {

@@ -27,6 +27,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Mot de passe', type: 'password' },
+        source: { label: 'Source', type: 'text' },
       },
       async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null
@@ -42,10 +43,12 @@ export const authOptions: NextAuthOptions = {
 
         /* ── 1. Table admin (User) ── */
         const adminUser = await prisma.user.findUnique({ where: { email: credentials.email } })
-        console.log('[auth] User found:', adminUser?.email, '| isActive:', adminUser?.isActive, '| isBlocked:', adminUser?.isBlocked)
         if (adminUser) {
+          // Depuis la page publique, refuser avec message explicite
+          if (credentials.source !== 'admin') {
+            throw new Error('ADMIN_USE_ADMIN_LOGIN')
+          }
           const isBlocked = await isAccountBlocked(credentials.email)
-          console.log('[auth] isActive:', adminUser.isActive, '| isAccountBlocked:', isBlocked)
           if (!adminUser.isActive || isBlocked) {
             await logLoginAttempt(credentials.email, ip, false, ua)
             return null
@@ -115,6 +118,10 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === 'google') {
         if (!user.email) return false
 
+        // Bloquer les comptes admin depuis OAuth
+        const adminUser = await prisma.user.findUnique({ where: { email: user.email } })
+        if (adminUser) return false
+
         const existing = await prisma.appUser.findFirst({
           where: {
             OR: [
@@ -135,13 +142,13 @@ export const authOptions: NextAuthOptions = {
           return true
         }
 
-        // Créer un nouveau compte participant via Google
+        // Créer un nouveau compte formateur via Google
         await prisma.appUser.create({
           data: {
             email: user.email,
             name: user.name ?? user.email,
             password: '',
-            type: 'participant',
+            type: 'formateur',
             isActive: true,
             emailVerified: true,
             googleId: account.providerAccountId,

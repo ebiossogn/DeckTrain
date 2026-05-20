@@ -6,65 +6,48 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Mail, Lock, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle, CheckCircle2,
+  Mail, Lock, Zap, Eye, EyeOff, Loader2, AlertCircle, Shield, ArrowLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-function LoginContent() {
+function AdminLoginContent() {
   const searchParams = useSearchParams()
-  const verified = searchParams.get('verified') === '1'
-  const tokenError = searchParams.get('error')
+  const urlError = searchParams.get('error')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isAdminError, setIsAdminError] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setIsAdminError(false)
 
-    const result = await signIn('credentials', { email, password, source: 'public', redirect: false })
+    const result = await signIn('credentials', {
+      email,
+      password,
+      source: 'admin',
+      redirect: false,
+    })
 
-    if (result?.error === 'ADMIN_USE_ADMIN_LOGIN') {
-      setIsAdminError(true)
-      setError('ADMIN_USE_ADMIN_LOGIN')
-      setLoading(false)
-    } else if (result?.error) {
+    if (result?.error) {
       setError('Email ou mot de passe incorrect.')
       setLoading(false)
     } else {
-      // Le token JWT est maintenant posé — laisser le serveur décider de la destination
       window.location.href = '/api/auth/redirect'
     }
   }
 
-  const handleGoogle = async () => {
-    setGoogleLoading(true)
-    await signIn('google', { callbackUrl: '/api/auth/redirect' })
-  }
-
-  const tokenErrorMessages: Record<string, string> = {
-    token_manquant: 'Lien de vérification invalide.',
-    token_invalide: 'Ce lien de vérification est invalide ou a déjà été utilisé.',
-    token_expire: 'Ce lien a expiré. Inscrivez-vous à nouveau.',
-  }
-
   return (
     <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      {/* Éléments décoratifs */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-accent/4 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-500/4 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-or/4 rounded-full blur-3xl" />
       </div>
 
-      {/* Lien retour */}
       <motion.div
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
@@ -80,7 +63,6 @@ function LoginContent() {
         </Link>
       </motion.div>
 
-      {/* Carte principale */}
       <motion.div
         initial={{ opacity: 0, y: 28, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -89,25 +71,29 @@ function LoginContent() {
       >
         <div className="rounded-2xl border border-light-text/8 dark:border-dark-text/8 bg-light-surface dark:bg-dark-surface p-8 shadow-2xl shadow-black/20">
           {/* Logo */}
-          <div className="flex items-center gap-2 font-syne font-bold text-xl mb-8">
+          <div className="flex items-center gap-2 font-display font-bold text-xl mb-6">
             <Zap className="text-accent" size={20} />
-            <span className="text-light-text dark:text-white">Deck</span><span className="text-or">Train</span>
+            <span className="text-light-text dark:text-white">Deck</span>
+            <span className="text-light-gold dark:text-or">Train</span>
           </div>
 
-          {/* Message compte vérifié */}
+          {/* Badge admin */}
+          <div className="flex items-center gap-2 mb-6 px-3 py-2.5 rounded-xl bg-light-gold/8 dark:bg-or/8 border border-light-gold/20 dark:border-or/20">
+            <Shield size={14} className="text-light-gold dark:text-or flex-shrink-0" />
+            <p className="text-xs text-light-gold dark:text-or">
+              Accès réservé au personnel DeckTrain.
+            </p>
+          </div>
+
+          <h1 className="font-display text-2xl font-semibold text-light-text dark:text-dark-text mb-1">
+            Administration
+          </h1>
+          <p className="text-sm text-light-text-muted dark:text-text-secondary mb-6">
+            Connectez-vous à votre espace administrateur.
+          </p>
+
           <AnimatePresence>
-            {verified && (
-              <motion.div
-                initial={{ opacity: 0, y: -8, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0 }}
-                className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-accent/10 border border-accent/25 text-accent text-sm mb-5"
-              >
-                <CheckCircle2 size={15} className="flex-shrink-0" />
-                Email confirmé. Vous pouvez maintenant vous connecter.
-              </motion.div>
-            )}
-            {tokenError && tokenErrorMessages[tokenError] && (
+            {urlError === 'admin_oauth_blocked' && (
               <motion.div
                 initial={{ opacity: 0, y: -8, height: 0 }}
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
@@ -115,43 +101,10 @@ function LoginContent() {
                 className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm mb-5"
               >
                 <AlertCircle size={15} className="flex-shrink-0" />
-                {tokenErrorMessages[tokenError]}
+                La connexion Google n'est pas disponible pour les comptes administrateurs.
               </motion.div>
             )}
           </AnimatePresence>
-
-          <h1 className="font-syne text-2xl font-bold text-light-text dark:text-dark-text mb-1">
-            Connexion
-          </h1>
-          <p className="text-sm text-light-text/50 dark:text-dark-text/50 mb-6">
-            Accédez à votre espace DeckTrain
-          </p>
-
-          {/* Google OAuth */}
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-light-text/12 dark:border-dark-text/12 bg-light-text/3 dark:bg-dark-text/3 hover:bg-light-text/6 dark:hover:bg-dark-text/6 text-light-text dark:text-dark-text text-sm font-medium transition-all duration-200 mb-5 disabled:opacity-50"
-          >
-            {googleLoading ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden>
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-              </svg>
-            )}
-            Continuer avec Google
-          </button>
-
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex-1 h-px bg-light-text/10 dark:bg-dark-text/10" />
-            <span className="text-xs text-light-text/40 dark:text-dark-text/40">ou</span>
-            <div className="flex-1 h-px bg-light-text/10 dark:bg-dark-text/10" />
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
@@ -165,7 +118,6 @@ function LoginContent() {
               required
             />
 
-            {/* Mot de passe avec toggle visibilité */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-light-text/70 dark:text-dark-text/70">
                 Mot de passe
@@ -195,7 +147,6 @@ function LoginContent() {
               </div>
             </div>
 
-            {/* Message d'erreur */}
             <AnimatePresence>
               {error && (
                 <motion.div
@@ -203,19 +154,10 @@ function LoginContent() {
                   animate={{ opacity: 1, y: 0, height: 'auto' }}
                   exit={{ opacity: 0, y: -8, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm"
+                  className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm"
                 >
-                  <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
-                  {isAdminError ? (
-                    <span>
-                      Ce compte est réservé aux administrateurs.{' '}
-                      <Link href="/admin/login" className="underline hover:text-red-300 transition-colors">
-                        Connectez-vous sur /admin/login
-                      </Link>
-                    </span>
-                  ) : (
-                    error
-                  )}
+                  <AlertCircle size={15} className="flex-shrink-0" />
+                  {error}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -236,18 +178,10 @@ function LoginContent() {
                 'Se connecter'
               )}
             </Button>
-
-            <p className="text-center text-sm text-light-text/50 dark:text-dark-text/50">
-              Pas encore de compte ?{' '}
-              <Link href="/register" className="text-accent hover:underline">
-                S'inscrire
-              </Link>
-            </p>
           </form>
         </div>
       </motion.div>
 
-      {/* Footer copyright */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -260,14 +194,16 @@ function LoginContent() {
   )
 }
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent" />
-      </div>
-    }>
-      <LoginContent />
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent" />
+        </div>
+      }
+    >
+      <AdminLoginContent />
     </Suspense>
   )
 }

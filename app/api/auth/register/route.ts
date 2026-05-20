@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       email: email.toLowerCase(),
       name: name.trim(),
       password: hash,
-      type: 'participant',
+      type: 'formateur',
       isActive: false,
       emailVerified: false,
       verificationToken: token,

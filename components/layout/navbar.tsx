@@ -45,7 +45,7 @@ export function Navbar({ showAdminLink = true }: NavbarProps) {
           {showAdminLink && (
             <Link href="/login"
               className="px-3 py-2 rounded-lg text-sm text-light-text-secondary dark:text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
-              Admin
+              Connexion
             </Link>
           )}
           <div className="ml-1">
