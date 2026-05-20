@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Lock, User, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingButton } from '@/components/ui/loading-button'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
@@ -211,13 +212,9 @@ export default function RegisterPage() {
                     )}
                   </AnimatePresence>
 
-                  <Button type="submit" variant="primary" size="lg" className="w-full mt-2" disabled={loading}>
-                    {loading ? (
-                      <><Loader2 size={15} className="animate-spin" />Création en cours…</>
-                    ) : (
-                      'Créer mon compte'
-                    )}
-                  </Button>
+                  <LoadingButton type="submit" variant="primary" loading={loading} className="w-full mt-2 py-3">
+                    Créer mon compte
+                  </LoadingButton>
 
                   <p className="text-center text-sm text-light-text/50 dark:text-dark-text/50">
                     Déjà un compte ?{' '}

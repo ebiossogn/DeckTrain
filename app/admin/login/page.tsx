@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingButton } from '@/components/ui/loading-button'
 
 function AdminLoginContent() {
   const searchParams = useSearchParams()
@@ -162,22 +163,14 @@ function AdminLoginContent() {
               )}
             </AnimatePresence>
 
-            <Button
+            <LoadingButton
               type="submit"
               variant="primary"
-              size="lg"
-              className="w-full mt-2"
-              disabled={loading}
+              loading={loading}
+              className="w-full mt-2 py-3"
             >
-              {loading ? (
-                <>
-                  <Loader2 size={15} className="animate-spin" />
-                  Connexion en cours…
-                </>
-              ) : (
-                'Se connecter'
-              )}
-            </Button>
+              Se connecter
+            </LoadingButton>
           </form>
         </div>
       </motion.div>
