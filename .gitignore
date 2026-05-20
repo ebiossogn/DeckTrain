@@ -16,3 +16,5 @@ next-env.d.ts
 *.db
 *.db-journal
 prisma/dev.db
+.env.local.save
+.env.local.save.1
