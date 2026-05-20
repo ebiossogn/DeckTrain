@@ -15,11 +15,11 @@ export default async function AdminLayout({
 
   return (
     <SessionTimeoutProvider>
-      <div className="flex h-screen bg-[#F5F5F2] dark:bg-[#0A0A0F] overflow-hidden transition-colors duration-300">
+      <div className="flex h-screen bg-light-bg dark:bg-dark-bg overflow-hidden transition-colors duration-300">
         <AdminSidebar userEmail={session.user.email} userRole={session.user.role as import('@/types/roles').AdminRole} />
 
         <div className="flex-1 flex flex-col overflow-hidden">
-          <main className="flex-1 overflow-y-auto p-8">{children}</main>
+          <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8">{children}</main>
 
           <footer className="px-8 py-3 border-t border-light-border dark:border-dark-border flex-shrink-0">
             <p className="text-xs text-text-secondary text-center label-dt">

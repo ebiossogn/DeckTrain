@@ -349,11 +349,10 @@ export function SlideManager({ module, initialSlides }: Props) {
                   value={editingSlide.transition ?? ''}
                   onChange={(e) => handleTransitionChange(e.target.value as TransitionType | '')}
                   className="flex-1 max-w-xs rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all"
-                  style={{ background: '#1C1C1C', color: '#CCCCCC', border: '1px solid #2E2E2E' }}
                 >
-                  <option value="" style={{ background: '#1C1C1C', color: '#CCCCCC' }}>— Par défaut (glissement)</option>
+                  <option value="">— Par défaut (glissement)</option>
                   {(Object.keys(TRANSITION_LABELS) as TransitionType[]).map((t) => (
-                    <option key={t} value={t} style={{ background: '#1C1C1C', color: '#CCCCCC' }}>{TRANSITION_LABELS[t]}</option>
+                    <option key={t} value={t}>{TRANSITION_LABELS[t]}</option>
                   ))}
                 </select>
               </div>

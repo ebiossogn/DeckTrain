@@ -58,40 +58,38 @@ const PLANS = [
     desc: 'Tout débloqué pour votre équipe.',
     highlight: true,
     features: ['Modules & slides illimités', 'Sondages illimités', '100 participants', 'Export PDF + PPTX', '5 admins + RBAC', 'Sécurité avancée', 'Support prioritaire'],
-    cta: 'Essai 14 jours',
+    cta: 'Commencer avec Pro',
     href: '/login',
     variant: 'primary' as const,
   },
   {
     name: 'Entreprise',
-    baseFCFA: null,
+    baseFCFA: null as unknown as number,
     isFree: false,
     isCustom: true,
-    desc: 'Hébergement privé, support dédié.',
+    desc: 'Pour les grandes organisations.',
     highlight: false,
-    features: ['Tout ce qui est dans Pro', 'Participants illimités', 'Hébergement on-premise', 'SSO / LDAP', 'SLA garanti', 'Intégration LMS', 'Formation & onboarding'],
+    features: ['Tout Pro inclus', 'Admins illimités', 'Participants illimités', 'Hébergement on-premise', 'SLA personnalisé', 'Formation incluse'],
     cta: 'Nous contacter',
-    href: 'mailto:christtangbe@ebiosso.com',
+    href: '/login',
     variant: 'secondary' as const,
   },
 ]
 
-/* ── Conversion ─────────────────────────────────────────────────── */
-function convert(baseFCFA: number, code: CurrencyCode, rates: Rates): number {
-  switch (code) {
-    case 'fcfa': return baseFCFA
-    case 'gnf':  return baseFCFA * rates.gnf
-    case 'eur':  return baseFCFA * rates.eur
-    case 'usd':  return baseFCFA * rates.usd
-  }
+/* ── Helpers ─────────────────────────────────────────────────────── */
+function convert(fcfa: number, code: CurrencyCode, rates: Rates): number {
+  if (code === 'fcfa') return fcfa
+  if (code === 'gnf') return Math.round(fcfa * rates.gnf)
+  if (code === 'eur') return Math.round(fcfa * rates.eur)
+  if (code === 'usd') return Math.round(fcfa * rates.usd)
+  return fcfa
 }
 
 function formatPrice(value: number, currency: Currency): string {
-  const rounded = currency.decimals === 0 ? Math.round(value) : +value.toFixed(currency.decimals)
-  return currency.prefix + rounded.toLocaleString(currency.locale) + currency.suffix
+  const formatted = new Intl.NumberFormat(currency.locale, { maximumFractionDigits: currency.decimals }).format(value)
+  return currency.prefix + formatted + currency.suffix
 }
 
-/* ── Composant prix animé ───────────────────────────────────────── */
 function AnimatedPrice({ value, currencyCode }: { value: string; currencyCode: string }) {
   return (
     <AnimatePresence mode="wait">
@@ -101,7 +99,7 @@ function AnimatedPrice({ value, currencyCode }: { value: string; currencyCode: s
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.2 }}
-        className="font-display font-light text-3xl text-white"
+        className="font-display font-light text-3xl text-light-text dark:text-white"
       >
         {value}
       </motion.span>
@@ -142,9 +140,9 @@ export function PricingSection() {
         {/* Titre */}
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="text-center mb-10">
-          <p className="label-dt text-text-secondary mb-3">Tarifs</p>
-          <h2 className="font-display text-3xl font-light text-white mb-3">Simple et transparent</h2>
-          <p className="text-sm text-text-secondary">Commencez gratuitement. Évoluez selon vos besoins.</p>
+          <p className="label-dt text-light-text-muted dark:text-text-secondary mb-3">Tarifs</p>
+          <h2 className="font-display text-3xl font-light text-light-text dark:text-white mb-3">Simple et transparent</h2>
+          <p className="text-sm text-light-text-muted dark:text-text-secondary">Commencez gratuitement. Évoluez selon vos besoins.</p>
         </motion.div>
 
         {/* Sélecteur de devise */}
@@ -152,7 +150,7 @@ export function PricingSection() {
           initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="flex flex-col items-center gap-3 mb-10"
         >
-          <div className="flex items-center gap-1.5 bg-dark-bg/60 border border-dark-border rounded-xl p-1">
+          <div className="flex items-center gap-1.5 bg-light-text/5 dark:bg-dark-bg/60 border border-light-border dark:border-dark-border rounded-xl p-1">
             {CURRENCIES.map((c) => (
               <button
                 key={c.code}
@@ -161,7 +159,7 @@ export function PricingSection() {
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
                   selected === c.code
                     ? 'bg-accent text-[#111111] shadow-[0_0_12px_rgba(0,212,255,0.3)]'
-                    : 'text-dark-text/60 hover:text-dark-text hover:bg-dark-text/5'
+                    : 'text-light-text-secondary dark:text-dark-text/60 hover:text-light-text dark:hover:text-dark-text hover:bg-light-text/5 dark:hover:bg-dark-text/5'
                 )}
               >
                 <span className="text-base leading-none">{c.flag}</span>
@@ -171,11 +169,11 @@ export function PricingSection() {
           </div>
 
           {/* Indicateur de fraîcheur */}
-          <div className="flex items-center gap-2 text-[11px] text-text-muted">
+          <div className="flex items-center gap-2 text-[11px] text-light-text-muted dark:text-text-muted">
             {rates.fallback ? (
               <>
-                <AlertCircle size={11} className="text-or" />
-                <span className="text-or/70">Taux indicatifs (API indisponible)</span>
+                <AlertCircle size={11} className="text-light-gold dark:text-or" />
+                <span className="text-light-gold/80 dark:text-or/70">Taux indicatifs (API indisponible)</span>
               </>
             ) : (
               <>
@@ -191,7 +189,7 @@ export function PricingSection() {
             <button
               onClick={fetchRates}
               disabled={loading}
-              className="text-text-muted hover:text-accent transition-colors disabled:opacity-40"
+              className="text-light-text-muted dark:text-text-muted hover:text-accent transition-colors disabled:opacity-40"
               title="Actualiser les taux"
             >
               <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />
@@ -220,37 +218,37 @@ export function PricingSection() {
                 transition={{ delay: i * 0.1 }}
               >
                 <div className={cn(
-                  'relative flex flex-col h-full rounded-2xl border-2 p-6 bg-dark-bg',
+                  'relative flex flex-col h-full rounded-2xl border-2 p-6 bg-light-surface dark:bg-dark-bg',
                   plan.highlight
-                    ? 'border-or shadow-[0_0_40px_rgba(200,184,154,0.12)]'
-                    : 'border-dark-border'
+                    ? 'border-light-gold dark:border-or shadow-[0_0_40px_rgba(200,184,154,0.12)]'
+                    : 'border-light-border dark:border-dark-border'
                 )}>
                   {plan.highlight && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-or text-[#111111] text-[10px] font-bold px-3 py-1 rounded-full label-dt">
+                      <span className="bg-light-gold dark:bg-or text-[#111111] text-[10px] font-bold px-3 py-1 rounded-full label-dt">
                         RECOMMANDÉ
                       </span>
                     </div>
                   )}
 
                   <div className="mb-5">
-                    <h3 className="font-display font-semibold text-or text-xl">{plan.name}</h3>
+                    <h3 className="font-display font-semibold text-light-gold dark:text-or text-xl">{plan.name}</h3>
                     <div className="flex items-baseline gap-1 mt-2 h-10 overflow-hidden">
                       {plan.isCustom ? (
-                        <span className="font-display font-light text-2xl text-white">Sur devis</span>
+                        <span className="font-display font-light text-2xl text-light-text dark:text-white">Sur devis</span>
                       ) : (
                         <AnimatedPrice value={priceDisplay} currencyCode={selected} />
                       )}
                     </div>
                     {!plan.isCustom && !plan.isFree && (
-                      <p className="text-[11px] text-text-muted mt-0.5 label-dt">par mois</p>
+                      <p className="text-[11px] text-light-text-muted dark:text-text-muted mt-0.5 label-dt">par mois</p>
                     )}
-                    <p className="text-xs text-text-secondary mt-1">{plan.desc}</p>
+                    <p className="text-xs text-light-text-muted dark:text-text-secondary mt-1">{plan.desc}</p>
                   </div>
 
                   <ul className="space-y-2 flex-1 mb-6">
                     {plan.features.map((feat) => (
-                      <li key={feat} className="flex items-start gap-2 text-sm text-dark-text">
+                      <li key={feat} className="flex items-start gap-2 text-sm text-light-text dark:text-dark-text">
                         <CheckCircle2 size={13} className="text-accent mt-0.5 flex-shrink-0" />
                         {feat}
                       </li>
@@ -271,7 +269,7 @@ export function PricingSection() {
         {/* Note de bas de section */}
         <motion.p
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-center text-xs text-text-muted mt-8"
+          className="text-center text-xs text-light-text-muted dark:text-text-muted mt-8"
         >
           Tous les prix sont hors taxes. La conversion est indicative et basée sur les taux du marché.
           Le paiement s'effectue en FCFA ou par virement bancaire.

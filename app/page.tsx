@@ -73,7 +73,7 @@ export default function HomePage() {
           {/* Logo display */}
           <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible"
             className="font-display font-light leading-none mb-6 tracking-tight"
-            style={{ fontSize: 'clamp(72px, 10vw, 110px)' }}>
+            style={{ fontSize: 'clamp(48px, 10vw, 110px)' }}>
             <span className="text-light-text dark:text-white">Deck</span><span className="text-light-gold dark:text-or">Train</span>
           </motion.div>
 

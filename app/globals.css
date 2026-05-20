@@ -75,20 +75,29 @@
   ::selection { background: rgba(0,212,255,0.2); color: #00D4FF; }
 }
 
-/* ── Selects natifs — toujours lisibles en dark ── */
+/* ── Selects natifs — light/dark ── */
 select {
+  background-color: #E8E4DE;
+  color: #1A1A1A;
+  border-color: #C8C4BE;
+}
+select option {
+  background-color: #E8E4DE;
+  color: #1A1A1A;
+}
+select option:checked,
+select option:hover {
+  background-color: var(--color-accent);
+  color: #111111;
+}
+.dark select {
   background-color: #1C1C1C;
   color: #CCCCCC;
   border-color: #2E2E2E;
 }
-select option {
+.dark select option {
   background-color: #1C1C1C;
   color: #CCCCCC;
-}
-select option:checked,
-select option:hover {
-  background-color: #00D4FF;
-  color: #111111;
 }
 
 /* ── Tiptap editor ── */
