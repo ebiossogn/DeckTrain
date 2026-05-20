@@ -23,15 +23,23 @@ module.exports = {
         'dark-border':  '#2E2E2E',
 
         /* ── Fonds light ── */
-        'light-bg':      '#F5F5F2',
-        'light-surface': '#FFFFFF',
-        'light-border':  '#E0E0E0',
+        'light-bg':             '#F0EDE8',
+        'light-surface':        '#E8E4DE',
+        'light-border':         '#C8C4BE',
 
-        /* ── Textes ── */
+        /* ── Textes dark ── */
         'dark-text':      '#CCCCCC',
-        'light-text':     '#111111',
         'text-secondary': '#888888',
         'text-muted':     '#555555',
+
+        /* ── Textes light ── */
+        'light-text':           '#1A1A1A',
+        'light-text-secondary': '#3D3D3D',
+        'light-text-muted':     '#6B6B6B',
+
+        /* ── Accents par mode ── */
+        'light-accent': '#0099BB',
+        'light-gold':   '#8A7055',
       },
       fontFamily: {
         /* Charte DeckTrain */

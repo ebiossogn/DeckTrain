@@ -5,19 +5,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Variables CSS ── */
+/* ── Variables CSS — light mode par défaut ── */
 :root {
   --color-dark-bg:       #111111;
   --color-dark-surface:  #1C1C1C;
   --color-or-sable:      #C8B89A;
   --color-or-profond:    #A89070;
-  --color-ivoire:        #F5F5F2;
   --color-accent:        #00D4FF;
   --color-accent-dark:   #0099BB;
   --color-border:        #2E2E2E;
-  --color-text-primary:  #CCCCCC;
-  --color-text-secondary:#888888;
-  --color-text-muted:    #555555;
+
+  /* Tokens mode-aware (light par défaut) */
+  --color-text-primary:   #1A1A1A;
+  --color-text-secondary: #3D3D3D;
+  --color-text-muted:     #6B6B6B;
+  --color-heading:        #1A1A1A;
+  --color-gold:           #8A7055;
+}
+
+/* ── Overrides dark mode ── */
+.dark {
+  --color-text-primary:   #CCCCCC;
+  --color-text-secondary: #888888;
+  --color-text-muted:     #555555;
+  --color-heading:        #FFFFFF;
+  --color-gold:           #C8B89A;
 }
 
 @layer base {
@@ -32,25 +44,24 @@
     @apply transition-colors duration-300;
     font-weight: 400;
     line-height: 1.6;
-    color: var(--color-text-primary);
   }
 
   /* ── Hiérarchie typographique DeckTrain ── */
   h1 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 300;
-    color: #FFFFFF;
+    color: var(--color-heading);
     letter-spacing: -0.01em;
   }
   h2 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 400;
-    color: #FFFFFF;
+    color: var(--color-heading);
   }
   h3 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 600;
-    color: #C8B89A;
+    color: var(--color-gold);
   }
 
   /* ── Scrollbar personnalisée ── */
@@ -174,6 +185,6 @@ select option:hover {
     font-weight: 600;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
   }
 }

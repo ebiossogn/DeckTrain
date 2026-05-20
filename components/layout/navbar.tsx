@@ -23,28 +23,28 @@ export function Navbar({ showAdminLink = true }: NavbarProps) {
           className="flex items-center gap-2 font-display font-bold text-xl hover:opacity-85 transition-opacity text-light-text dark:text-dark-text"
         >
           <Zap className="text-accent" size={20} />
-          <span className="text-white">Deck</span><span className="text-or">Train</span>
+          <span className="text-light-text dark:text-white">Deck</span><span className="text-light-gold dark:text-or">Train</span>
         </Link>
 
         <div className="flex items-center gap-1">
           <Link href="/present"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-light-text-secondary dark:text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
             <Monitor size={14} />
             <span className="hidden sm:inline">Modules</span>
           </Link>
           <Link href="/exercises"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-light-text-secondary dark:text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
             <PenTool size={14} />
             <span className="hidden sm:inline">Exercices</span>
           </Link>
           <Link href="/agenda"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-light-text-secondary dark:text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
             <Calendar size={14} />
             <span className="hidden sm:inline">Agenda</span>
           </Link>
           {showAdminLink && (
             <Link href="/login"
-              className="px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
+              className="px-3 py-2 rounded-lg text-sm text-light-text-secondary dark:text-text-secondary hover:text-accent hover:bg-accent/6 transition-all">
               Admin
             </Link>
           )}
