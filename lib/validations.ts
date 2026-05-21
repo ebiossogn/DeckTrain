@@ -54,7 +54,7 @@ export const registerSchema = z.object({
 export const createExerciseSchema = z.object({
   title: z.string().min(1, 'Le titre est obligatoire').max(300).trim(),
   type: z.enum(['qcm', 'atelier']),
-  difficulty: z.enum(['facile', 'moyen', 'difficile']),
+  difficulty: z.enum(['facile', 'intermediaire', 'avance']),
   content: z.record(z.string(), z.unknown()),
   solution: z.string().max(5000).optional(),
 })
