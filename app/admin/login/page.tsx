@@ -15,8 +15,9 @@ import { LoadingButton } from '@/components/ui/loading-button'
 function AdminLoginContent() {
   const searchParams = useSearchParams()
   const urlError = searchParams.get('error')
+  const prefillEmail = searchParams.get('email') ?? ''
 
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(prefillEmail)
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -79,10 +80,11 @@ function AdminLoginContent() {
           </div>
 
           {/* Badge admin */}
-          <div className="flex items-center gap-2 mb-6 px-3 py-2.5 rounded-xl bg-light-gold/8 dark:bg-or/8 border border-light-gold/20 dark:border-or/20">
-            <Shield size={14} className="text-light-gold dark:text-or flex-shrink-0" />
-            <p className="text-xs text-light-gold dark:text-or">
-              Accès réservé au personnel DeckTrain.
+          <div className="flex items-start gap-2 mb-6 px-3 py-2.5 rounded-xl bg-light-gold/8 dark:bg-or/8 border border-light-gold/20 dark:border-or/20">
+            <Shield size={14} className="text-light-gold dark:text-or flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-light-gold dark:text-or leading-relaxed">
+              Accès réservé au personnel DeckTrain.<br />
+              Vos identifiants vous ont été fournis par votre administrateur.
             </p>
           </div>
 

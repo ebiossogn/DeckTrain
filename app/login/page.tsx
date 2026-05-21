@@ -2,8 +2,9 @@
 
 import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Mail, Lock, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle, CheckCircle2,
@@ -14,6 +15,7 @@ import { LoadingButton } from '@/components/ui/loading-button'
 
 function LoginContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const verified = searchParams.get('verified') === '1'
   const tokenError = searchParams.get('error')
 
@@ -23,20 +25,19 @@ function LoginContent() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isAdminError, setIsAdminError] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setIsAdminError(false)
 
     const result = await signIn('credentials', { email, password, source: 'public', redirect: false })
 
     if (result?.error === 'ADMIN_USE_ADMIN_LOGIN') {
-      setIsAdminError(true)
-      setError('ADMIN_USE_ADMIN_LOGIN')
-      setLoading(false)
+      toast.info('Compte administrateur détecté — redirection vers l\'espace admin')
+      await new Promise(r => setTimeout(r, 1500))
+      router.push(`/admin/login?email=${encodeURIComponent(email)}`)
+      return
     } else if (result?.error) {
       setError('Email ou mot de passe incorrect.')
       setLoading(false)
@@ -207,16 +208,7 @@ function LoginContent() {
                   className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm"
                 >
                   <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
-                  {isAdminError ? (
-                    <span>
-                      Ce compte est réservé aux administrateurs.{' '}
-                      <Link href="/admin/login" className="underline hover:text-red-300 transition-colors">
-                        Connectez-vous sur /admin/login
-                      </Link>
-                    </span>
-                  ) : (
-                    error
-                  )}
+                  {error}
                 </motion.div>
               )}
             </AnimatePresence>

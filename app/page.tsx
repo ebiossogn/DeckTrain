@@ -97,7 +97,7 @@ export default function HomePage() {
 
           <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible"
             className="flex flex-wrap gap-4 justify-center">
-            <Link href="/login">
+            <Link href="/register">
               <Button size="lg" variant="primary" className="group">
                 Commencer maintenant
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -233,7 +233,7 @@ export default function HomePage() {
               Rejoignez les formateurs africains qui ont déjà adopté DeckTrain.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/login">
+              <Link href="/register">
                 <Button size="lg" variant="primary" className="shadow-[0_0_20px_rgba(0,212,255,0.25)]">
                   Commencer maintenant
                   <ArrowRight size={16} />
