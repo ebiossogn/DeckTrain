@@ -6,9 +6,8 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Mail, Lock, Zap, Eye, EyeOff, Loader2, AlertCircle, Shield, ArrowLeft,
+  Mail, Lock, Zap, Eye, EyeOff, AlertCircle, Shield, ArrowLeft,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
 

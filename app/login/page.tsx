@@ -33,7 +33,16 @@ function LoginContent() {
 
     const result = await signIn('credentials', { email, password, source: 'public', redirect: false })
 
-    if (result?.error === 'ADMIN_USE_ADMIN_LOGIN') {
+    console.log('SignIn result:', result)
+    console.log('Error:', result?.error)
+
+    const isAdminRedirect =
+      result?.error === 'ADMIN_USE_ADMIN_LOGIN' ||
+      result?.error?.includes('ADMIN') ||
+      result?.error?.includes('admin') ||
+      result?.error?.includes('administrateur')
+
+    if (isAdminRedirect) {
       toast.info('Compte administrateur détecté — redirection vers l\'espace admin')
       await new Promise(r => setTimeout(r, 1500))
       router.push(`/admin/login?email=${encodeURIComponent(email)}`)
