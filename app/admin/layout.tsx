@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -9,9 +10,16 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  // La page /admin/login ne doit pas hériter du layout protégé
+  const pathname = headers().get('x-pathname') ?? ''
+  if (pathname === '/admin/login') {
+    return <>{children}</>
+  }
+
   const session = await getServerSession(authOptions)
 
-  if (!session) redirect('/login')
+  if (!session) redirect('/admin/login')
+  if (session.user.userType !== 'admin') redirect('/admin/login')
 
   return (
     <SessionTimeoutProvider>

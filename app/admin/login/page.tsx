@@ -38,7 +38,7 @@ function AdminLoginContent() {
       setError('Email ou mot de passe incorrect.')
       setLoading(false)
     } else {
-      window.location.href = '/api/auth/redirect'
+      window.location.href = '/admin/overview'
     }
   }
 
