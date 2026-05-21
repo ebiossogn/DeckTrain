@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Mail, Lock, Zap, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle, CheckCircle2,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
 
@@ -31,23 +30,24 @@ function LoginContent() {
     setLoading(true)
     setError('')
 
-    const result = await signIn('credentials', { email, password, source: 'public', redirect: false })
+    // Vérifier si l'email appartient à un admin avant signIn (plus fiable que les erreurs NextAuth)
+    const checkResp = await fetch('/api/auth/check-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    const { isAdmin } = await checkResp.json()
 
-    console.log('SignIn result:', result)
-    console.log('Error:', result?.error)
-
-    const isAdminRedirect =
-      result?.error === 'ADMIN_USE_ADMIN_LOGIN' ||
-      result?.error?.includes('ADMIN') ||
-      result?.error?.includes('admin') ||
-      result?.error?.includes('administrateur')
-
-    if (isAdminRedirect) {
-      toast.info('Compte administrateur détecté — redirection vers l\'espace admin')
+    if (isAdmin) {
+      toast.info("Compte administrateur détecté — redirection vers l'espace admin")
       await new Promise(r => setTimeout(r, 1500))
       router.push(`/admin/login?email=${encodeURIComponent(email)}`)
       return
-    } else if (result?.error) {
+    }
+
+    const result = await signIn('credentials', { email, password, source: 'public', redirect: false })
+
+    if (result?.error) {
       setError('Email ou mot de passe incorrect.')
       setLoading(false)
     } else {
