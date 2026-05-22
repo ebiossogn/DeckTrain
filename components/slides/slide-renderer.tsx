@@ -9,6 +9,7 @@ import { TitleBulletsSlide } from './renderers/title-bullets'
 import { QuoteSlide }        from './renderers/quote'
 import { ComparisonSlide }   from './renderers/comparison'
 import { FreeLayoutSlide }   from './renderers/free-layout'
+import { CanvasSlide }       from './renderers/canvas-renderer'
 
 export function SlideRenderer({ slide }: { slide: SlideWithContent }) {
   switch (slide.type) {
@@ -19,6 +20,7 @@ export function SlideRenderer({ slide }: { slide: SlideWithContent }) {
     case 'quote':         return <QuoteSlide        content={slide.content as QuoteContent}        />
     case 'comparison':    return <ComparisonSlide   content={slide.content as ComparisonContent}   />
     case 'free-layout':   return <FreeLayoutSlide   content={slide.content as FreeLayoutContent}   />
+    case 'canvas':        return <CanvasSlide       content={slide.content as any}                 />
     default:              return null
   }
 }

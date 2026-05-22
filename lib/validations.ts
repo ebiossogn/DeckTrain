@@ -17,6 +17,7 @@ export const createSlideSchema = z.object({
   type: z.enum([
     'title-text', 'title-image', 'title-code',
     'title-bullets', 'quote', 'comparison', 'free',
+    'canvas',
   ]),
   content: z.record(z.string(), z.unknown()),
   order: z.number().int().min(0).optional(),

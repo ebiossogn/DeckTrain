@@ -31,7 +31,9 @@ export type SlideType =
   | 'quote'
   | 'comparison'
   | 'free-layout'
+  | 'canvas'
 
+// ── Legacy form-based content types ──────────────────────────────────────────
 export interface TitleTextContent { title: string; body: string }
 export interface TitleImageContent { title: string; imageUrl: string; altText: string; position: 'center' | 'left' | 'right' }
 export interface TitleCodeContent { title: string; code: string; language: string; highlightedHtml?: string }
@@ -41,9 +43,95 @@ export interface QuoteContent { quote: string; author: string; background: 'cyan
 export interface ComparisonContent { leftTitle: string; leftContent: string; rightTitle: string; rightContent: string; dividerLabel: string }
 export interface FreeLayoutContent { title: string; body: string }
 
+// ── Canvas element types ──────────────────────────────────────────────────────
+export interface TextProps {
+  content: string
+  fontSize: number
+  fontFamily: string
+  fontWeight: string
+  fontStyle: string
+  color: string
+  backgroundColor: string
+  textAlign: 'left' | 'center' | 'right'
+  lineHeight: number
+  letterSpacing: number
+  padding: number
+  borderRadius: number
+}
+
+export interface ImageProps {
+  src: string
+  alt: string
+  objectFit: 'cover' | 'contain' | 'fill'
+  borderRadius: number
+  border: string
+  shadow: string
+}
+
+export interface ShapeProps {
+  shapeType: 'rectangle' | 'circle' | 'triangle'
+  fill: string
+  stroke: string
+  strokeWidth: number
+  borderRadius: number
+  shadow: string
+}
+
+export interface IconProps {
+  iconName: string
+  color: string
+  size: number
+}
+
+export interface CodeProps {
+  code: string
+  language: string
+  showLineNumbers: boolean
+}
+
+export interface LineProps {
+  orientation: 'horizontal' | 'vertical'
+  color: string
+  thickness: number
+  style: 'solid' | 'dashed' | 'dotted'
+}
+
+export type ElementProps = TextProps | ImageProps | ShapeProps | IconProps | CodeProps | LineProps
+
+export interface SlideElement {
+  id: string
+  type: 'text' | 'image' | 'shape' | 'icon' | 'code' | 'line'
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation: number
+  zIndex: number
+  opacity: number
+  locked: boolean
+  props: ElementProps
+}
+
+export interface SlideBackground {
+  type: 'color' | 'gradient' | 'image'
+  value: string
+  gradientTo?: string
+  gradientDirection?: string
+}
+
+export interface SlideCanvas {
+  id: string
+  elements: SlideElement[]
+  background: SlideBackground
+  speakerNotes: string | null
+  timerMinutes: number | null
+  transition: TransitionType | null
+}
+
 export type SlideContent =
   | TitleTextContent | TitleImageContent | TitleCodeContent
-  | TitleBulletsContent | QuoteContent | ComparisonContent | FreeLayoutContent
+  | TitleBulletsContent | QuoteContent | ComparisonContent
+  | FreeLayoutContent | SlideCanvas
 
 export interface SlideWithContent {
   id: string
@@ -78,6 +166,7 @@ export const SLIDE_TYPE_LABELS: Record<SlideType, string> = {
   'quote': 'Citation',
   'comparison': 'Comparaison',
   'free-layout': 'Libre',
+  'canvas': 'Canvas visuel',
 }
 
 export const SLIDE_TYPE_DESCRIPTIONS: Record<SlideType, string> = {
@@ -88,6 +177,7 @@ export const SLIDE_TYPE_DESCRIPTIONS: Record<SlideType, string> = {
   'quote': 'Citation plein écran avec fond coloré',
   'comparison': 'Deux colonnes côte à côte',
   'free-layout': 'Canvas libre avec éditeur riche',
+  'canvas': 'Éditeur visuel drag & drop style Canva',
 }
 
 let _uid = 0
@@ -102,5 +192,6 @@ export function getDefaultContent(type: SlideType): SlideContent {
     case 'quote':         return { quote: 'Votre citation inspirante ici.', author: 'Auteur', background: 'cyan' }
     case 'comparison':    return { leftTitle: 'Avant', leftContent: '<p>Situation initiale</p>', rightTitle: 'Après', rightContent: '<p>Situation améliorée</p>', dividerLabel: 'VS' }
     case 'free-layout':   return { title: 'Slide libre', body: '<p>Contenu libre.</p>' }
+    case 'canvas':        return { id: '', elements: [], background: { type: 'color', value: '#111111' }, speakerNotes: null, timerMinutes: null, transition: null }
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Type, Image, Code2, List, Quote, Columns2, Layout, GripVertical, Trash2 } from 'lucide-react'
+import { Type, Image, Code2, List, Quote, Columns2, Layout, GripVertical, Trash2, PenLine } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { SlideWithContent, SlideType } from '@/types/slides'
 import { SLIDE_TYPE_LABELS } from '@/types/slides'
@@ -13,6 +13,7 @@ const ICONS: Record<SlideType, React.ElementType> = {
   'quote': Quote,
   'comparison': Columns2,
   'free-layout': Layout,
+  'canvas': PenLine,
 }
 
 function getTitle(slide: SlideWithContent): string {

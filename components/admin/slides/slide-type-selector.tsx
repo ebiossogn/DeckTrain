@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Type, Image, Code2, List, Quote, Columns2, Layout, X } from 'lucide-react'
+import { Type, Image, Code2, List, Quote, Columns2, Layout, X, PenLine } from 'lucide-react'
 import type { SlideType } from '@/types/slides'
 import { SLIDE_TYPE_LABELS, SLIDE_TYPE_DESCRIPTIONS } from '@/types/slides'
 
@@ -13,9 +13,10 @@ const ICONS: Record<SlideType, React.ElementType> = {
   'quote': Quote,
   'comparison': Columns2,
   'free-layout': Layout,
+  'canvas': PenLine,
 }
 
-const ORDER: SlideType[] = ['title-text', 'title-image', 'title-code', 'title-bullets', 'quote', 'comparison', 'free-layout']
+const ORDER: SlideType[] = ['canvas', 'title-text', 'title-image', 'title-code', 'title-bullets', 'quote', 'comparison', 'free-layout']
 
 interface Props {
   onSelect: (type: SlideType) => void

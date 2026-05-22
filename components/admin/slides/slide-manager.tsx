@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { Plus, Loader2, Save, ArrowLeft, Clock, FileText, Layers, SlidersHorizontal, Zap, FileDown, Printer, Upload, Sparkles } from 'lucide-react'
-import type { SlideWithContent, SlideType, SlideContent, TransitionType } from '@/types/slides'
+import type { SlideWithContent, SlideType, SlideContent, TransitionType, SlideCanvas } from '@/types/slides'
 import { getDefaultContent, TRANSITION_LABELS } from '@/types/slides'
+import { SlideEditorCanvas } from '@/components/editor/slide-editor-canvas'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -27,19 +28,41 @@ interface Props {
   initialSlides: SlideWithContent[]
 }
 
+function toCanvasSlide(slide: SlideWithContent): SlideCanvas {
+  const c = slide.content as any
+  return {
+    id: slide.id,
+    elements: c?.elements ?? [],
+    background: c?.background ?? { type: 'color', value: '#111111' },
+    speakerNotes: slide.speakerNotes,
+    timerMinutes: slide.timerMinutes,
+    transition: slide.transition,
+  }
+}
+
 export function SlideManager({ module, initialSlides }: Props) {
   const router = useRouter()
   const [slides, setSlides] = useState<SlideWithContent[]>(initialSlides)
-  const [selectedId, setSelectedId] = useState<string | null>(initialSlides[0]?.id ?? null)
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialSlides[0]?.type !== 'canvas' ? (initialSlides[0]?.id ?? null) : null
+  )
   const [isPickingType, setIsPickingType] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
-  const [editingSlide, setEditingSlide] = useState<SlideWithContent | null>(initialSlides[0] ?? null)
+  const [editingSlide, setEditingSlide] = useState<SlideWithContent | null>(
+    initialSlides[0]?.type !== 'canvas' ? (initialSlides[0] ?? null) : null
+  )
+  const [canvasSlide, setCanvasSlide] = useState<SlideCanvas | null>(null)
   const [showImport, setShowImport]   = useState(false)
   const [showAI, setShowAI]           = useState(false)
   const [slideToDelete, setSlideToDelete] = useState<string | null>(null)
 
   const selectSlide = (slide: SlideWithContent) => {
+    if (slide.type === 'canvas') {
+      setCanvasSlide(toCanvasSlide(slide))
+      setIsPickingType(false)
+      return
+    }
     setSelectedId(slide.id)
     setEditingSlide({ ...slide })
     setIsPickingType(false)
@@ -94,15 +117,35 @@ export function SlideManager({ module, initialSlides }: Props) {
   }
 
   const handleCreateSlide = async (type: SlideType) => {
+    const defaultContent = type === 'canvas'
+      ? { elements: [], background: { type: 'color', value: '#111111' } }
+      : getDefaultContent(type)
     const res = await fetch(`/api/modules/${module.id}/slides`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, content: getDefaultContent(type), speakerNotes: '', timerMinutes: null }),
+      body: JSON.stringify({ type, content: defaultContent, speakerNotes: '', timerMinutes: null }),
     })
     if (!res.ok) return
     const slide: SlideWithContent = await res.json()
     setSlides((prev) => [...prev, slide])
     selectSlide(slide)
+  }
+
+  const handleCanvasSave = async (canvas: SlideCanvas) => {
+    const res = await fetch(`/api/modules/${module.id}/slides/${canvas.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: { elements: canvas.elements, background: canvas.background },
+        speakerNotes: canvas.speakerNotes,
+        timerMinutes: canvas.timerMinutes,
+        transition: canvas.transition,
+      }),
+    })
+    if (res.ok) {
+      const updated: SlideWithContent = await res.json()
+      setSlides(prev => prev.map(s => s.id === updated.id ? updated : s))
+    }
   }
 
   const handleDeleteSlide = (slideId: string) => setSlideToDelete(slideId)
@@ -433,6 +476,15 @@ export function SlideManager({ module, initialSlides }: Props) {
         onConfirm={confirmDeleteSlide}
         onCancel={() => setSlideToDelete(null)}
       />
+
+      {/* ── Éditeur canvas plein écran ── */}
+      {canvasSlide && (
+        <SlideEditorCanvas
+          slide={canvasSlide}
+          onSave={handleCanvasSave}
+          onClose={() => setCanvasSlide(null)}
+        />
+      )}
     </div>
   )
 }
