@@ -29,6 +29,7 @@ import { ROLE_LABELS, ROLE_COLORS } from '@/types/roles'
 import type { AdminRole } from '@/types/roles'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { NotificationBell } from '@/components/admin/notification-bell'
+import { SearchModal } from '@/components/ui/search-modal'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -111,6 +112,11 @@ export function AdminSidebar({ userEmail, userRole }: AdminSidebarProps) {
         <p className="text-[10px] text-light-text-muted dark:text-text-secondary px-5 pb-2 label-dt -mt-1">
           Administration
         </p>
+
+        {/* Recherche globale */}
+        <div className="px-3 pb-2">
+          <SearchModal />
+        </div>
 
         {/* Navigation principale */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
