@@ -28,52 +28,32 @@ interface Currency {
   locale: string
 }
 
+interface ApiPlan {
+  id: string; name: string; slug: string; priceFCFA: number
+  maxModules: number; maxParticipants: number; maxSurveys: number; maxAdmins: number
+  features: string[]; isHighlighted: boolean
+}
+
+/* ── Config statique par slug ───────────────────────────────────── */
+const PLAN_META: Record<string, { desc: string; cta: string; href: string; variant: 'ghost' | 'primary' | 'secondary' }> = {
+  free:       { desc: '1 formateur, 3 modules maximum.',    cta: 'Commencer gratuitement', href: '/register', variant: 'ghost'     },
+  pro:        { desc: 'Tout débloqué pour votre équipe.',   cta: 'Commencer avec Pro',     href: '/register', variant: 'primary'   },
+  enterprise: { desc: 'Pour les grandes organisations.',    cta: 'Nous contacter',          href: '/login',    variant: 'secondary' },
+}
+
+/* ── Fallback hardcodé (si API indisponible) ────────────────────── */
+const FALLBACK_PLANS: ApiPlan[] = [
+  { id: 'free',       name: 'Gratuit',    slug: 'free',       priceFCFA: 0,      maxModules: 3,  maxParticipants: 10,  maxSurveys: 2,  maxAdmins: 1,  isHighlighted: false, features: ['1 formateur', '3 modules, 30 slides', '2 sondages', '10 participants', 'Export PDF', 'Support communautaire'] },
+  { id: 'pro',        name: 'Pro',        slug: 'pro',        priceFCFA: 29_000, maxModules: -1, maxParticipants: 100, maxSurveys: -1, maxAdmins: 5,  isHighlighted: true,  features: ['Modules & slides illimités', 'Sondages illimités', '100 participants', 'Export PDF + PPTX', '5 admins + RBAC', 'Sécurité avancée', 'Support prioritaire'] },
+  { id: 'enterprise', name: 'Entreprise', slug: 'enterprise', priceFCFA: -1,     maxModules: -1, maxParticipants: -1,  maxSurveys: -1, maxAdmins: -1, isHighlighted: false, features: ['Tout Pro inclus', 'Admins illimités', 'Participants illimités', 'Hébergement on-premise', 'SLA personnalisé', 'Formation incluse'] },
+]
+
 /* ── Config devises ─────────────────────────────────────────────── */
 const CURRENCIES: Currency[] = [
   { code: 'fcfa', label: 'FCFA',  flag: '🌍', prefix: '',  suffix: ' FCFA', decimals: 0, locale: 'fr-FR' },
   { code: 'gnf',  label: 'GNF',   flag: '🇬🇳', prefix: '',  suffix: ' GNF',  decimals: 0, locale: 'fr-FR' },
   { code: 'eur',  label: 'EUR',   flag: '🇪🇺', prefix: '',  suffix: ' €',    decimals: 0, locale: 'fr-FR' },
   { code: 'usd',  label: 'USD',   flag: '🇺🇸', prefix: '$', suffix: '',      decimals: 0, locale: 'en-US' },
-]
-
-/* ── Prix de base en FCFA ───────────────────────────────────────── */
-const PLANS = [
-  {
-    name: 'Gratuit',
-    baseFCFA: 0,
-    isFree: true,
-    isCustom: false,
-    desc: '1 formateur, 3 modules maximum.',
-    highlight: false,
-    features: ['1 formateur', '3 modules, 30 slides', '2 sondages', '10 participants', 'Export PDF', 'Support communautaire'],
-    cta: 'Commencer gratuitement',
-    href: '/login',
-    variant: 'ghost' as const,
-  },
-  {
-    name: 'Pro',
-    baseFCFA: 29_000,
-    isFree: false,
-    isCustom: false,
-    desc: 'Tout débloqué pour votre équipe.',
-    highlight: true,
-    features: ['Modules & slides illimités', 'Sondages illimités', '100 participants', 'Export PDF + PPTX', '5 admins + RBAC', 'Sécurité avancée', 'Support prioritaire'],
-    cta: 'Commencer avec Pro',
-    href: '/login',
-    variant: 'primary' as const,
-  },
-  {
-    name: 'Entreprise',
-    baseFCFA: null as unknown as number,
-    isFree: false,
-    isCustom: true,
-    desc: 'Pour les grandes organisations.',
-    highlight: false,
-    features: ['Tout Pro inclus', 'Admins illimités', 'Participants illimités', 'Hébergement on-premise', 'SLA personnalisé', 'Formation incluse'],
-    cta: 'Nous contacter',
-    href: '/login',
-    variant: 'secondary' as const,
-  },
 ]
 
 /* ── Helpers ─────────────────────────────────────────────────────── */
@@ -114,6 +94,7 @@ export function PricingSection() {
     gnf: 13.18, eur: 0.001525, usd: 0.001658, updatedAt: null, fallback: true,
   })
   const [loading, setLoading] = useState(false)
+  const [plans, setPlans] = useState<ApiPlan[]>(FALLBACK_PLANS)
 
   const fetchRates = useCallback(async () => {
     setLoading(true)
@@ -129,6 +110,9 @@ export function PricingSection() {
 
   useEffect(() => {
     fetchRates()
+    fetch('/api/plans').then(r => r.ok ? r.json() : null).then(data => {
+      if (Array.isArray(data) && data.length > 0) setPlans(data)
+    }).catch(() => {})
   }, [fetchRates])
 
   const currency = CURRENCIES.find((c) => c.code === selected)!
@@ -199,19 +183,20 @@ export function PricingSection() {
 
         {/* Grille de plans */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {PLANS.map((plan, i) => {
-            const convertedValue = plan.baseFCFA !== null
-              ? convert(plan.baseFCFA, selected, rates)
-              : null
-            const priceDisplay = plan.isCustom
+          {plans.map((plan, i) => {
+            const isCustom = plan.priceFCFA === -1
+            const isFree = plan.priceFCFA === 0
+            const meta = PLAN_META[plan.slug] ?? PLAN_META.free
+            const convertedValue = !isCustom ? convert(plan.priceFCFA, selected, rates) : 0
+            const priceDisplay = isCustom
               ? 'Sur devis'
-              : plan.isFree
+              : isFree
               ? currency.prefix + '0' + currency.suffix
-              : formatPrice(convertedValue!, currency)
+              : formatPrice(convertedValue, currency)
 
             return (
               <motion.div
-                key={plan.name}
+                key={plan.id}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -219,11 +204,11 @@ export function PricingSection() {
               >
                 <div className={cn(
                   'relative flex flex-col h-full rounded-2xl border-2 p-6 bg-light-surface dark:bg-dark-bg',
-                  plan.highlight
+                  plan.isHighlighted
                     ? 'border-light-gold dark:border-or shadow-[0_0_40px_rgba(200,184,154,0.12)]'
                     : 'border-light-border dark:border-dark-border'
                 )}>
-                  {plan.highlight && (
+                  {plan.isHighlighted && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="bg-light-gold dark:bg-or text-[#111111] text-[10px] font-bold px-3 py-1 rounded-full label-dt">
                         RECOMMANDÉ
@@ -234,16 +219,16 @@ export function PricingSection() {
                   <div className="mb-5">
                     <h3 className="font-display font-semibold text-light-gold dark:text-or text-xl">{plan.name}</h3>
                     <div className="flex items-baseline gap-1 mt-2 h-10 overflow-hidden">
-                      {plan.isCustom ? (
+                      {isCustom ? (
                         <span className="font-display font-light text-2xl text-light-text dark:text-white">Sur devis</span>
                       ) : (
                         <AnimatedPrice value={priceDisplay} currencyCode={selected} />
                       )}
                     </div>
-                    {!plan.isCustom && !plan.isFree && (
+                    {!isCustom && !isFree && (
                       <p className="text-[11px] text-light-text-muted dark:text-text-muted mt-0.5 label-dt">par mois</p>
                     )}
-                    <p className="text-xs text-light-text-muted dark:text-text-secondary mt-1">{plan.desc}</p>
+                    <p className="text-xs text-light-text-muted dark:text-text-secondary mt-1">{meta.desc}</p>
                   </div>
 
                   <ul className="space-y-2 flex-1 mb-6">
@@ -255,9 +240,9 @@ export function PricingSection() {
                     ))}
                   </ul>
 
-                  <Link href={plan.href}>
-                    <Button variant={plan.variant} size="md" className="w-full">
-                      {plan.cta}
+                  <Link href={meta.href}>
+                    <Button variant={meta.variant} size="md" className="w-full">
+                      {meta.cta}
                     </Button>
                   </Link>
                 </div>

@@ -24,6 +24,7 @@ import {
   X,
   Trash2,
   FileText,
+  CreditCard,
 } from 'lucide-react'
 import { ROLE_LABELS, ROLE_COLORS } from '@/types/roles'
 import type { AdminRole } from '@/types/roles'
@@ -42,6 +43,7 @@ const navItems = [
   { href: '/admin/team',      icon: Users,           label: 'Équipe' },
   { href: '/admin/users',     icon: UserCircle,      label: 'Utilisateurs' },
   { href: '/admin/trash',     icon: Trash2,          label: 'Corbeille' },
+  { href: '/admin/billing',   icon: CreditCard,      label: 'Facturation' },
   { href: '/admin/security',  icon: Shield,          label: 'Sécurité' },
   { href: '/admin/settings',  icon: Settings,        label: 'Paramètres' },
 ]

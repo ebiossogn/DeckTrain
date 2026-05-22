@@ -38,6 +38,7 @@ model AppUser {
   firstLogin              Boolean       @default(true)
   onboardingStep          Int           @default(0)
   certificates            Certificate[]
+  subscription            Subscription?
   createdAt               DateTime      @default(now())
 }
 
@@ -221,4 +222,35 @@ model Notification {
   link      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Plan {
+  id              String         @id @default(cuid())
+  name            String
+  slug            String         @unique
+  priceFCFA       Int            @default(0)
+  maxModules      Int            @default(3)
+  maxSlides       Int            @default(30)
+  maxParticipants Int            @default(10)
+  maxSurveys      Int            @default(2)
+  maxAdmins       Int            @default(1)
+  features        String         @default("[]")
+  isHighlighted   Boolean        @default(false)
+  isActive        Boolean        @default(true)
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  subscriptions   Subscription[]
+}
+
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  user      AppUser   @relation(fields: [userId], references: [id])
+  planId    String
+  plan      Plan      @relation(fields: [planId], references: [id])
+  status    String    @default("active")
+  startedAt DateTime  @default(now())
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

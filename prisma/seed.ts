@@ -97,6 +97,60 @@ async function main() {
     },
   })
 
+  // ── Plans tarifaires ─────────────────────────────────────────────────────
+  const plans = [
+    {
+      name: 'Gratuit',
+      slug: 'free',
+      priceFCFA: 0,
+      maxModules: 3,
+      maxSlides: 30,
+      maxParticipants: 10,
+      maxSurveys: 2,
+      maxAdmins: 1,
+      features: JSON.stringify(['1 formateur', '3 modules, 30 slides', '2 sondages', '10 participants', 'Export PDF', 'Support communautaire']),
+      isHighlighted: false,
+      isActive: true,
+      sortOrder: 0,
+    },
+    {
+      name: 'Pro',
+      slug: 'pro',
+      priceFCFA: 29_000,
+      maxModules: -1,
+      maxSlides: -1,
+      maxParticipants: 100,
+      maxSurveys: -1,
+      maxAdmins: 5,
+      features: JSON.stringify(['Modules & slides illimités', 'Sondages illimités', '100 participants', 'Export PDF + PPTX', '5 admins + RBAC', 'Sécurité avancée', 'Support prioritaire']),
+      isHighlighted: true,
+      isActive: true,
+      sortOrder: 1,
+    },
+    {
+      name: 'Entreprise',
+      slug: 'enterprise',
+      priceFCFA: -1,
+      maxModules: -1,
+      maxSlides: -1,
+      maxParticipants: -1,
+      maxSurveys: -1,
+      maxAdmins: -1,
+      features: JSON.stringify(['Tout Pro inclus', 'Admins illimités', 'Participants illimités', 'Hébergement on-premise', 'SLA personnalisé', 'Formation incluse']),
+      isHighlighted: false,
+      isActive: true,
+      sortOrder: 2,
+    },
+  ]
+
+  for (const plan of plans) {
+    await prisma.plan.upsert({
+      where: { slug: plan.slug },
+      update: plan,
+      create: plan,
+    })
+  }
+
   console.log('✅ Seed terminé')
   console.log('')
   console.log('Comptes créés :')
