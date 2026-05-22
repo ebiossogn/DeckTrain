@@ -39,6 +39,7 @@ model AppUser {
   onboardingStep          Int           @default(0)
   certificates            Certificate[]
   subscription            Subscription?
+  moduleAccess            ModuleParticipant[]
   createdAt               DateTime      @default(now())
 }
 
@@ -52,19 +53,34 @@ model LoginLog {
 }
 
 model Module {
-  id           String          @id @default(cuid())
-  title        String
-  description  String?
-  order        Int
-  slides       Slide[]
-  exercises    Exercise[]
-  sessions     AgendaSession[]
-  resources    Resource[]
-  liveSessions LiveSession[]
-  certificates Certificate[]
-  isDeleted    Boolean         @default(false)
-  deletedAt    DateTime?
-  createdAt    DateTime        @default(now())
+  id                  String               @id @default(cuid())
+  title               String
+  description         String?
+  order               Int
+  isDeleted           Boolean              @default(false)
+  deletedAt           DateTime?
+  visibility          String               @default("private")
+  publishAt           DateTime?
+  countdownMessage    String?
+  createdBy           String?
+  slides              Slide[]
+  exercises           Exercise[]
+  sessions            AgendaSession[]
+  resources           Resource[]
+  liveSessions        LiveSession[]
+  certificates        Certificate[]
+  allowedParticipants ModuleParticipant[]
+  createdAt           DateTime             @default(now())
+}
+
+model ModuleParticipant {
+  moduleId      String
+  participantId String
+  module        Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  participant   AppUser @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime @default(now())
+
+  @@id([moduleId, participantId])
 }
 
 model LiveSession {
