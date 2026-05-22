@@ -68,6 +68,9 @@ export async function PATCH(req: Request, { params }: P) {
 export async function DELETE(_req: Request, { params }: P) {
   const err = await assertAuth()
   if (err) return err
-  await prisma.survey.delete({ where: { id: params.id } })
+  await prisma.survey.update({
+    where: { id: params.id },
+    data: { isDeleted: true, deletedAt: new Date() },
+  })
   return NextResponse.json({ ok: true })
 }

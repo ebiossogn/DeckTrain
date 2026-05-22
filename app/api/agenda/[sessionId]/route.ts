@@ -40,6 +40,9 @@ export async function DELETE(
 ) {
   const err = await assertAuth()
   if (err) return err
-  await prisma.agendaSession.delete({ where: { id: params.sessionId } })
+  await prisma.agendaSession.update({
+    where: { id: params.sessionId },
+    data: { isDeleted: true, deletedAt: new Date() },
+  })
   return NextResponse.json({ ok: true })
 }

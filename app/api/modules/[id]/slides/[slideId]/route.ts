@@ -32,6 +32,9 @@ export async function DELETE(
 ) {
   const err = await assertAuth()
   if (err) return err
-  await prisma.slide.delete({ where: { id: params.slideId } })
+  await prisma.slide.update({
+    where: { id: params.slideId },
+    data: { isDeleted: true, deletedAt: new Date() },
+  })
   return NextResponse.json({ ok: true })
 }

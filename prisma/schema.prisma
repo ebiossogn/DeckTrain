@@ -35,6 +35,8 @@ model AppUser {
   googleId                String?   @unique
   tempPassword            Boolean   @default(false)
   moduleIds               String?
+  firstLogin              Boolean   @default(true)
+  onboardingStep          Int       @default(0)
   createdAt               DateTime  @default(now())
 }
 
@@ -57,6 +59,8 @@ model Module {
   sessions     AgendaSession[]
   resources    Resource[]
   liveSessions LiveSession[]
+  isDeleted    Boolean         @default(false)
+  deletedAt    DateTime?
   createdAt    DateTime        @default(now())
 }
 
@@ -77,46 +81,52 @@ model LiveSession {
 }
 
 model Slide {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   moduleId     String
-  module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module       Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   type         String
   order        Int
   content      String
   speakerNotes String?
   timerMinutes Int?
   transition   String?
-  createdAt    DateTime @default(now())
+  isDeleted    Boolean   @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
 }
 
 model Exercise {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   moduleId   String
-  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module     Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   type       String
   title      String
   content    String
   difficulty String
   solution   String?
   order      Int
-  createdAt  DateTime @default(now())
+  isDeleted  Boolean   @default(false)
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
 }
 
 model AgendaSession {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  type        String   @default("formation")
+  type        String    @default("formation")
   startDate   DateTime
   endDate     DateTime
   startTime   String?
   endTime     String?
   description String?
   location    String?
-  status      String   @default("planifie")
+  status      String    @default("planifie")
   color       String?
   moduleId    String?
-  module      Module?  @relation(fields: [moduleId], references: [id])
-  createdAt   DateTime @default(now())
+  module      Module?   @relation(fields: [moduleId], references: [id])
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
 }
 
 model Resource {
@@ -138,6 +148,8 @@ model Survey {
   isActive    Boolean          @default(true)
   isLive      Boolean          @default(false)
   questions   SurveyQuestion[]
+  isDeleted   Boolean          @default(false)
+  deletedAt   DateTime?
   createdAt   DateTime         @default(now())
 }
 
@@ -170,4 +182,29 @@ model AppSettings {
   trainingTitle    String  @default("Formation Tech")
   trainingSubtitle String  @default("Mai 2026")
   trainerName      String  @default("CHRIST J.")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  userEmail  String?
+  userRole   String?
+  action     String
+  resource   String
+  resourceId String?
+  details    String?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

@@ -6,6 +6,7 @@ import { createAgendaSchema } from '@/lib/validations'
 
 export async function GET() {
   const sessions = await prisma.agendaSession.findMany({
+    where: { isDeleted: false },
     orderBy: { startDate: 'asc' },
     include: { module: { select: { id: true, title: true } } },
   })

@@ -22,10 +22,13 @@ import {
   BarChart2,
   Menu,
   X,
+  Trash2,
+  FileText,
 } from 'lucide-react'
 import { ROLE_LABELS, ROLE_COLORS } from '@/types/roles'
 import type { AdminRole } from '@/types/roles'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { NotificationBell } from '@/components/admin/notification-bell'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -36,6 +39,7 @@ const navItems = [
   { href: '/admin/surveys',   icon: BarChart2,       label: 'Sondages' },
   { href: '/admin/team',      icon: Users,           label: 'Équipe' },
   { href: '/admin/users',     icon: UserCircle,      label: 'Utilisateurs' },
+  { href: '/admin/trash',     icon: Trash2,          label: 'Corbeille' },
   { href: '/admin/security',  icon: Shield,          label: 'Sécurité' },
   { href: '/admin/settings',  icon: Settings,        label: 'Paramètres' },
 ]
@@ -92,14 +96,17 @@ export function AdminSidebar({ userEmail, userRole }: AdminSidebarProps) {
             <Zap className="text-accent" size={18} />
             <span className="text-light-text dark:text-white">Deck</span><span className="text-light-gold dark:text-or">Train</span>
           </Link>
-          {/* Bouton fermeture mobile */}
-          <button
-            onClick={close}
-            className="md:hidden w-7 h-7 flex items-center justify-center rounded-lg text-light-text-muted dark:text-text-secondary hover:bg-light-text/8 dark:hover:bg-white/8 transition-colors"
-            aria-label="Fermer le menu"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            {/* Bouton fermeture mobile */}
+            <button
+              onClick={close}
+              className="md:hidden w-7 h-7 flex items-center justify-center rounded-lg text-light-text-muted dark:text-text-secondary hover:bg-light-text/8 dark:hover:bg-white/8 transition-colors"
+              aria-label="Fermer le menu"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
         <p className="text-[10px] text-light-text-muted dark:text-text-secondary px-5 pb-2 label-dt -mt-1">
           Administration
@@ -141,6 +148,30 @@ export function AdminSidebar({ userEmail, userRole }: AdminSidebarProps) {
           <div className="pt-3 pb-1">
             <div className="border-t border-light-border dark:border-dark-border" />
           </div>
+
+          {/* Audit log (SUPER_ADMIN uniquement) */}
+          {userRole === 'SUPER_ADMIN' && (
+            <motion.div
+              initial={{ opacity: 0, x: -14 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: navItems.length * 0.05, duration: 0.3 }}
+            >
+              <Link
+                href="/admin/audit-log"
+                onClick={close}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
+                  pathname === '/admin/audit-log'
+                    ? 'bg-accent/8 text-accent border-l-2 border-accent pl-[10px]'
+                    : 'text-light-text-secondary dark:text-text-secondary hover:text-light-text dark:hover:text-dark-text hover:bg-light-text/5 dark:hover:bg-white/4'
+                )}
+              >
+                <FileText size={16} className="flex-shrink-0" />
+                <span className="flex-1">Journal d'audit</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent/10 text-accent">SA</span>
+              </Link>
+            </motion.div>
+          )}
 
           {/* Lien présentation */}
           <Link

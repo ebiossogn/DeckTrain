@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { sendVerificationEmail } from '@/lib/mailer'
 import { validateBody } from '@/lib/api-validator'
 import { registerSchema } from '@/lib/validations'
+import { notifyAdmins } from '@/lib/notifications'
 
 export async function POST(req: Request) {
   const body = await req.json()
@@ -40,8 +41,14 @@ export async function POST(req: Request) {
     await sendVerificationEmail(email.toLowerCase(), name.trim(), token)
   } catch (e) {
     console.error('[register] email send failed:', e)
-    // On ne bloque pas l'inscription si l'email échoue en dev
   }
+
+  await notifyAdmins(
+    'NEW_FORMATEUR',
+    'Nouveau formateur inscrit',
+    `${name.trim()} (${email.toLowerCase()}) vient de créer un compte.`,
+    '/admin/users'
+  ).catch(() => {})
 
   return NextResponse.json({ ok: true })
 }

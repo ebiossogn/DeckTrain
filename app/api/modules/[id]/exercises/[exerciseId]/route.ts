@@ -32,6 +32,9 @@ export async function DELETE(
 ) {
   const err = await assertAuth()
   if (err) return err
-  await prisma.exercise.delete({ where: { id: params.exerciseId } })
+  await prisma.exercise.update({
+    where: { id: params.exerciseId },
+    data: { isDeleted: true, deletedAt: new Date() },
+  })
   return NextResponse.json({ ok: true })
 }

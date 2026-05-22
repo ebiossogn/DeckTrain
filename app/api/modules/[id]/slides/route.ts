@@ -12,7 +12,10 @@ function parse(s: { id: string; moduleId: string; type: string; order: number; c
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
   if (err) return err
-  const slides = await prisma.slide.findMany({ where: { moduleId: params.id }, orderBy: { order: 'asc' } })
+  const slides = await prisma.slide.findMany({
+    where: { moduleId: params.id, isDeleted: false },
+    orderBy: { order: 'asc' },
+  })
   return NextResponse.json(slides.map(parse))
 }
 
@@ -23,7 +26,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const v = validateBody(createSlideSchema, body)
   if ('error' in v) return v.error
   const { type, content, speakerNotes, timerMinutes } = v.data
-  const max = await prisma.slide.aggregate({ where: { moduleId: params.id }, _max: { order: true } })
+  const max = await prisma.slide.aggregate({ where: { moduleId: params.id, isDeleted: false }, _max: { order: true } })
   const slide = await prisma.slide.create({
     data: {
       moduleId: params.id,

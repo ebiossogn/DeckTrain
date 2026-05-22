@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
+import { auditLog } from '@/lib/audit'
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
@@ -12,13 +13,18 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     data: { title: title.trim(), description: description ?? null },
     include: { _count: { select: { slides: true } } },
   })
+  await auditLog('UPDATE', 'MODULE', module.id, { title: module.title })
   return NextResponse.json({ ...module, createdAt: module.createdAt.toISOString() })
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
   if (err) return err
-  await prisma.slide.deleteMany({ where: { moduleId: params.id } })
-  await prisma.module.delete({ where: { id: params.id } })
+  const module = await prisma.module.findUnique({ where: { id: params.id }, select: { title: true } })
+  await prisma.module.update({
+    where: { id: params.id },
+    data: { isDeleted: true, deletedAt: new Date() },
+  })
+  await auditLog('DELETE', 'MODULE', params.id, { title: module?.title, softDelete: true })
   return NextResponse.json({ ok: true })
 }

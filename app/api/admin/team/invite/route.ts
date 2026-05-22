@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { validateBody } from '@/lib/api-validator'
 import { inviteAdminSchema } from '@/lib/validations'
+import { auditLog } from '@/lib/audit'
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$'
@@ -40,5 +41,6 @@ export async function POST(req: Request) {
     select: { id: true, email: true, name: true, role: true, createdAt: true },
   })
 
+  await auditLog('INVITE_ADMIN', 'ADMIN', user.id, { email, role })
   return NextResponse.json({ user, tempPassword }, { status: 201 })
 }

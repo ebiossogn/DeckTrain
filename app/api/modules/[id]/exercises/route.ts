@@ -6,7 +6,7 @@ import { createExerciseSchema } from '@/lib/validations'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const exercises = await prisma.exercise.findMany({
-    where: { moduleId: params.id },
+    where: { moduleId: params.id, isDeleted: false },
     orderBy: { order: 'asc' },
   })
   return NextResponse.json(
@@ -26,7 +26,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if ('error' in v) return v.error
   const { title, type, content, difficulty, solution } = v.data
   const max = await prisma.exercise.aggregate({
-    where: { moduleId: params.id },
+    where: { moduleId: params.id, isDeleted: false },
     _max: { order: true },
   })
   const exercise = await prisma.exercise.create({

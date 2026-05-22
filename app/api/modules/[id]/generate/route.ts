@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Anthropic from '@anthropic-ai/sdk'
+import { auditLog } from '@/lib/audit'
 
 const MAX_SLIDES = 20
 
@@ -235,6 +236,7 @@ async function saveSlides(moduleId: string, slides: AISlide[], moduleTitle?: str
       )
     )
 
+    await auditLog('GENERATE_AI', 'MODULE', moduleId, { moduleTitle, slideCount: created.length })
     return NextResponse.json({
       success: true,
       created: created.length,

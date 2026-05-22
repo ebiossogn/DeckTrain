@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { BookOpen, Monitor, Calendar, PenTool } from 'lucide-react'
+import { OnboardingWizard } from '@/components/formateur/onboarding-wizard'
 
 export default async function FormateurPage() {
   const session = await getServerSession(authOptions)
@@ -12,7 +13,7 @@ export default async function FormateurPage() {
   // Récupérer les moduleIds assignés au formateur
   const appUser = await prisma.appUser.findUnique({
     where: { id: session.user.id },
-    select: { moduleIds: true },
+    select: { moduleIds: true, firstLogin: true, onboardingStep: true },
   })
 
   const assignedIds: string[] | null = appUser?.moduleIds
@@ -39,6 +40,9 @@ export default async function FormateurPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
+      {appUser?.firstLogin && (
+        <OnboardingWizard initialStep={appUser.onboardingStep ?? 0} />
+      )}
       {/* En-tête */}
       <div className="mb-8">
         <h1 className="font-display text-3xl font-light text-light-text dark:text-white mb-1">

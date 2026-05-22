@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { assertAuth } from '@/lib/api-auth'
 import { generatePptx } from '@/lib/export-pptx'
 import type { SlideWithContent } from '@/types/slides'
+import { auditLog } from '@/lib/audit'
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
@@ -37,6 +38,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       console.error('[PPTX] generatePptx failed:', e)
       return NextResponse.json({ error: 'Erreur génération PPTX', detail: String(e) }, { status: 500 })
     }
+    await auditLog('EXPORT', 'MODULE', params.id, { title: module.title, format: 'pptx' })
     const safe = module.title.replace(/[^a-z0-9]/gi, '_').slice(0, 50)
     return new Response(new Uint8Array(buffer), {
       headers: {

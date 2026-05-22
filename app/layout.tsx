@@ -8,10 +8,18 @@ import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/components/providers/session-provider'
 import { AccentProvider } from '@/components/providers/accent-provider'
 import { prisma } from '@/lib/prisma'
+import { InstallPWABanner } from '@/components/ui/install-pwa-banner'
 
 export const metadata: Metadata = {
   title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
   description: 'Plateforme tout-en-un : slides interactives, exercices, sondages en direct et agenda. Alternative à PowerPoint pensée pour les formateurs africains.',
+  manifest: '/manifest.json',
+  themeColor: '#00D4FF',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'DeckTrain',
+  },
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
@@ -35,6 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
           </ThemeProvider>
         </AuthProvider>
+        <InstallPWABanner />
         <Toaster
           position="bottom-right"
           toastOptions={{

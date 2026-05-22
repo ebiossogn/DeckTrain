@@ -10,6 +10,7 @@ export async function GET() {
   if (err) return err
 
   const surveys = await prisma.survey.findMany({
+    where: { isDeleted: false },
     orderBy: { createdAt: 'desc' },
     include: {
       questions: { orderBy: { order: 'asc' } },
