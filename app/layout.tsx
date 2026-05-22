@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'black-translucent',
     title: 'DeckTrain',
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',

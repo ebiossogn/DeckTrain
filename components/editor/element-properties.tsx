@@ -10,6 +10,13 @@ interface Props {
   onDelete: () => void
 }
 
+// <input type="color"> n'accepte que #rrggbb — convertir les autres valeurs
+function safeHex(color: string | undefined | null): string {
+  if (!color || color === 'transparent' || color === 'none') return '#000000'
+  if (color.startsWith('#') && (color.length === 4 || color.length === 7)) return color
+  return '#000000'
+}
+
 const ELEMENT_TITLES: Record<SlideElement['type'], string> = {
   text: 'Texte', image: 'Image', shape: 'Forme',
   icon: 'Icône', code: 'Code', line: 'Ligne',
@@ -181,7 +188,7 @@ function TextPanel({ props, onUpdate }: { props: TextProps; onUpdate: (p: Record
       <div>
         <label className="text-[10px] text-[#555] block mb-1.5">Couleur texte</label>
         <div className="flex items-center gap-2 flex-wrap">
-          <input type="color" value={props.color} onChange={e => onUpdate({ color: e.target.value })}
+          <input type="color" value={safeHex(props.color)} onChange={e => onUpdate({ color: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-[#2E2E2E] bg-transparent" />
           {QUICK_COLORS.map(c => (
             <button key={c} onClick={() => onUpdate({ color: c })}
@@ -195,7 +202,7 @@ function TextPanel({ props, onUpdate }: { props: TextProps; onUpdate: (p: Record
         <label className="text-[10px] text-[#555] block mb-1.5">Fond du texte</label>
         <div className="flex items-center gap-2">
           <input type="color"
-            value={props.backgroundColor === 'transparent' ? '#000000' : props.backgroundColor}
+            value={safeHex(props.backgroundColor)}
             onChange={e => onUpdate({ backgroundColor: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-[#2E2E2E] bg-transparent" />
           <button onClick={() => onUpdate({ backgroundColor: 'transparent' })}
@@ -302,7 +309,7 @@ function ShapePanel({ props, onUpdate }: { props: ShapeProps; onUpdate: (p: Reco
       <div>
         <label className="text-[10px] text-[#555] block mb-1.5">Couleur de remplissage</label>
         <div className="flex items-center gap-2 flex-wrap">
-          <input type="color" value={props.fill} onChange={e => onUpdate({ fill: e.target.value })}
+          <input type="color" value={safeHex(props.fill)} onChange={e => onUpdate({ fill: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-[#2E2E2E]" />
           {QUICK_COLORS.map(c => (
             <button key={c} onClick={() => onUpdate({ fill: c })}
@@ -314,7 +321,7 @@ function ShapePanel({ props, onUpdate }: { props: ShapeProps; onUpdate: (p: Reco
       <div className="flex gap-2">
         <div className="flex-1">
           <label className="text-[10px] text-[#555] block mb-1">Bordure</label>
-          <input type="color" value={props.stroke} onChange={e => onUpdate({ stroke: e.target.value })}
+          <input type="color" value={safeHex(props.stroke)} onChange={e => onUpdate({ stroke: e.target.value })}
             className="w-full h-8 rounded cursor-pointer border border-[#2E2E2E]" />
         </div>
         <div className="flex-1">
@@ -358,7 +365,7 @@ function IconPanel({ props, onUpdate }: { props: IconProps; onUpdate: (p: Record
       <div>
         <label className="text-[10px] text-[#555] block mb-1.5">Couleur</label>
         <div className="flex items-center gap-2 flex-wrap">
-          <input type="color" value={props.color} onChange={e => onUpdate({ color: e.target.value })}
+          <input type="color" value={safeHex(props.color)} onChange={e => onUpdate({ color: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-[#2E2E2E]" />
           {QUICK_COLORS.map(c => (
             <button key={c} onClick={() => onUpdate({ color: c })}
@@ -425,7 +432,7 @@ function LinePanel({ props, onUpdate }: { props: LineProps; onUpdate: (p: Record
       <div>
         <label className="text-[10px] text-[#555] block mb-1.5">Couleur</label>
         <div className="flex items-center gap-2">
-          <input type="color" value={props.color} onChange={e => onUpdate({ color: e.target.value })}
+          <input type="color" value={safeHex(props.color)} onChange={e => onUpdate({ color: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-[#2E2E2E]" />
           {QUICK_COLORS.slice(0, 5).map(c => (
             <button key={c} onClick={() => onUpdate({ color: c })}
