@@ -23,21 +23,22 @@ model User {
 }
 
 model AppUser {
-  id                      String    @id @default(cuid())
-  email                   String    @unique
+  id                      String        @id @default(cuid())
+  email                   String        @unique
   name                    String
   password                String
-  type                    String    @default("participant")
-  isActive                Boolean   @default(true)
-  emailVerified           Boolean   @default(false)
+  type                    String        @default("participant")
+  isActive                Boolean       @default(true)
+  emailVerified           Boolean       @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
-  googleId                String?   @unique
-  tempPassword            Boolean   @default(false)
+  googleId                String?       @unique
+  tempPassword            Boolean       @default(false)
   moduleIds               String?
-  firstLogin              Boolean   @default(true)
-  onboardingStep          Int       @default(0)
-  createdAt               DateTime  @default(now())
+  firstLogin              Boolean       @default(true)
+  onboardingStep          Int           @default(0)
+  certificates            Certificate[]
+  createdAt               DateTime      @default(now())
 }
 
 model LoginLog {
@@ -61,6 +62,7 @@ model Module {
   sessions     AgendaSession[]
   resources    Resource[]
   liveSessions LiveSession[]
+  certificates Certificate[]
   createdAt    DateTime        @default(now())
 }
 
@@ -182,6 +184,18 @@ model AppSettings {
   trainingTitle    String  @default("Formation Tech")
   trainingSubtitle String  @default("Mai 2026")
   trainerName      String  @default("CHRIST J.")
+}
+
+model Certificate {
+  id            String   @id @default(cuid())
+  participantId String
+  participant   AppUser  @relation(fields: [participantId], references: [id])
+  moduleId      String
+  module        Module   @relation(fields: [moduleId], references: [id])
+  issuedBy      String
+  issuedAt      DateTime @default(now())
+  code          String   @unique
+  pdfUrl        String?
 }
 
 model AuditLog {

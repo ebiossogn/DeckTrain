@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import {
   UserCircle, Plus, X, Check, Trash2, ToggleLeft, ToggleRight, Eye, EyeOff, Copy,
-  GraduationCap, BookOpen,
+  GraduationCap, BookOpen, Award,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { ConfirmModal } from '@/components/ui/confirm-modal'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { IssueCertificateModal } from '@/components/admin/users/issue-certificate-modal'
 import { cn } from '@/lib/utils'
 
 interface AppUserRecord {
@@ -199,6 +200,7 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
   const [toggling, setToggling]     = useState<string | null>(null)
   const [deleting, setDeleting]     = useState<string | null>(null)
   const [userToDelete, setUserToDelete] = useState<AppUserRecord | null>(null)
+  const [certTarget, setCertTarget] = useState<AppUserRecord | null>(null)
   const [filter, setFilter]         = useState<'all' | 'formateur' | 'participant'>('all')
 
   const filtered = users.filter((u) => filter === 'all' || u.type === filter)
@@ -311,6 +313,13 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
                 </div>
 
                 <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    onClick={() => setCertTarget(user)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-light-text/40 dark:text-dark-text/40 hover:text-amber-400 hover:bg-amber-400/8 transition-colors"
+                    title="Émettre un certificat"
+                  >
+                    <Award size={14} />
+                  </button>
                   <button onClick={() => handleToggle(user)} disabled={toggling === user.id}
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-light-text/40 dark:text-dark-text/40 hover:text-accent hover:bg-accent/8 transition-colors"
                     title={user.isActive ? 'Désactiver' : 'Réactiver'}>
@@ -334,6 +343,13 @@ export function UsersClient({ initial, modules }: { initial: AppUserRecord[]; mo
             modules={modules}
             onClose={() => setShowCreate(false)}
             onCreated={(u) => setUsers((p) => [u, ...p])}
+          />
+        )}
+        {certTarget && (
+          <IssueCertificateModal
+            participant={{ id: certTarget.id, name: certTarget.name, email: certTarget.email }}
+            modules={modules}
+            onClose={() => setCertTarget(null)}
           />
         )}
       </AnimatePresence>
