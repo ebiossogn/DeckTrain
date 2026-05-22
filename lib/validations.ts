@@ -21,8 +21,8 @@ export const createSlideSchema = z.object({
   ]),
   content: z.record(z.string(), z.unknown()),
   order: z.number().int().min(0).optional(),
-  speakerNotes: z.string().max(2000).optional(),
-  timerMinutes: z.number().int().min(1).max(180).optional(),
+  speakerNotes: z.string().max(2000).nullish(),
+  timerMinutes: z.number().int().min(1).max(180).nullish(),
 })
 
 // ── Inscription ───────────────────────────────────────────────────────────────
