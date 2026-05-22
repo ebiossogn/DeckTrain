@@ -6,7 +6,7 @@ import type { SlideWithContent } from '@/types/slides'
 export default async function ModuleSlidesPage({ params }: { params: { id: string } }) {
   const module = await prisma.module.findUnique({
     where: { id: params.id },
-    include: { slides: { orderBy: { order: 'asc' } } },
+    include: { slides: { where: { isDeleted: false }, orderBy: { order: 'asc' } } },
   })
   if (!module) notFound()
 

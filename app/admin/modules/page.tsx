@@ -5,6 +5,7 @@ import type { ModuleWithCount } from '@/types/slides'
 export default async function ModulesPage() {
   const [raw, liveSessions] = await Promise.all([
     prisma.module.findMany({
+      where: { isDeleted: false },
       orderBy: { order: 'asc' },
       include: { _count: { select: { slides: true } } },
     }),
@@ -20,6 +21,10 @@ export default async function ModulesPage() {
     ...m,
     description: m.description ?? null,
     createdAt: m.createdAt.toISOString(),
+    visibility: m.visibility,
+    publishAt: m.publishAt?.toISOString() ?? null,
+    countdownMessage: m.countdownMessage ?? null,
+    createdBy: m.createdBy ?? null,
   }))
 
   return <ModulesClient initialModules={modules} liveMap={liveMap} />

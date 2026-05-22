@@ -16,7 +16,7 @@ export default async function ExercisesModulePage({
   const [module, settings] = await Promise.all([
     prisma.module.findUnique({
       where: { id: params.moduleId },
-      include: { exercises: { orderBy: { order: 'asc' } } },
+      include: { exercises: { where: { isDeleted: false }, orderBy: { order: 'asc' } } },
     }),
     prisma.appSettings.findUnique({ where: { id: 'singleton' } }),
   ])

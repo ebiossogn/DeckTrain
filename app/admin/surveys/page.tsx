@@ -5,6 +5,7 @@ import type { QuestionType } from '@/types/surveys'
 
 export default async function SurveysPage() {
   const surveys = await prisma.survey.findMany({
+    where: { isDeleted: false },
     orderBy: { createdAt: 'desc' },
     include: { questions: { orderBy: { order: 'asc' } } },
   })

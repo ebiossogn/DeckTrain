@@ -31,12 +31,13 @@ const AGENDA_TYPE_LABELS: Record<string, string> = {
 export default async function AdminOverviewPage() {
   const [modules, allSlides, allExercises, allEvents] = await Promise.all([
     prisma.module.findMany({
+      where: { isDeleted: false },
       orderBy: { order: 'asc' },
       include: { _count: { select: { slides: true, exercises: true } } },
     }),
-    prisma.slide.findMany({ select: { type: true } }),
-    prisma.exercise.findMany({ select: { type: true, difficulty: true } }),
-    prisma.agendaSession.findMany({ select: { type: true, status: true } }),
+    prisma.slide.findMany({ where: { isDeleted: false }, select: { type: true } }),
+    prisma.exercise.findMany({ where: { isDeleted: false }, select: { type: true, difficulty: true } }),
+    prisma.agendaSession.findMany({ where: { isDeleted: false }, select: { type: true, status: true } }),
   ])
 
   /* ── Stats KPI ── */

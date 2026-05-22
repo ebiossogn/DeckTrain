@@ -1,12 +1,13 @@
 'use client'
 
 import { useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/language-context'
+import type { Locale } from '@/lib/i18n/translations'
 
 const LOCALES = [
-  { code: 'fr', label: 'FR', flag: '🇫🇷' },
-  { code: 'en', label: 'EN', flag: '🇬🇧' },
+  { code: 'fr' as Locale, label: 'FR', flag: '🇫🇷' },
+  { code: 'en' as Locale, label: 'EN', flag: '🇬🇧' },
 ] as const
 
 interface LanguageSwitcherProps {
@@ -15,16 +16,13 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ current, compact = false }: LanguageSwitcherProps) {
-  const router = useRouter()
+  const { locale: ctxLocale, changeLocale } = useLanguage()
   const [pending, startTransition] = useTransition()
 
-  const active = current ?? (typeof document !== 'undefined'
-    ? document.cookie.match(/locale=([^;]+)/)?.[1] ?? 'fr'
-    : 'fr')
+  const active = current ?? ctxLocale
 
-  const setLocale = (locale: string) => {
-    document.cookie = `locale=${locale}; path=/; max-age=31536000; SameSite=Lax`
-    startTransition(() => { router.refresh() })
+  const setLocale = (locale: Locale) => {
+    startTransition(() => { changeLocale(locale) })
   }
 
   if (compact) {

@@ -11,6 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { InstallPWABanner } from '@/components/ui/install-pwa-banner'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getLocale } from 'next-intl/server'
+import { LanguageProvider } from '@/contexts/language-context'
 
 export const metadata: Metadata = {
   title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
@@ -42,12 +43,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className="dark" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale}>
+          <LanguageProvider>
           <AuthProvider>
             <ThemeProvider>
               <AccentProvider accentColor={accentColor} />
               {children}
             </ThemeProvider>
           </AuthProvider>
+          </LanguageProvider>
           <InstallPWABanner />
           <Toaster
             position="bottom-right"

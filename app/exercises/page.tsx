@@ -11,8 +11,9 @@ import { PenTool, BookOpen, ChevronRight } from 'lucide-react'
 
 export default async function ExercisesIndexPage() {
   const modules = await prisma.module.findMany({
+    where: { isDeleted: false },
     orderBy: { order: 'asc' },
-    include: { _count: { select: { exercises: true } } },
+    include: { _count: { select: { exercises: { where: { isDeleted: false } } } } },
   })
   const withExercises = modules.filter((m) => m._count.exercises > 0)
 

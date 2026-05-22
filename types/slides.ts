@@ -63,6 +63,10 @@ export interface ModuleWithCount {
   description: string | null
   order: number
   createdAt: string
+  visibility?: string | null
+  publishAt?: string | null
+  countdownMessage?: string | null
+  createdBy?: string | null
   _count: { slides: number }
 }
 

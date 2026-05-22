@@ -24,9 +24,19 @@ export async function POST(req: Request) {
   const v = validateBody(createModuleSchema, body)
   if ('error' in v) return v.error
   const { title, description } = v.data
+  const visibility = typeof body.visibility === 'string' ? body.visibility : 'private'
+  const publishAt = typeof body.publishAt === 'string' ? new Date(body.publishAt) : null
+  const countdownMessage = typeof body.countdownMessage === 'string' ? body.countdownMessage : null
   const max = await prisma.module.aggregate({ where: { isDeleted: false }, _max: { order: true } })
   const module = await prisma.module.create({
-    data: { title, description: description ?? null, order: (max._max.order ?? 0) + 1 },
+    data: {
+      title,
+      description: description ?? null,
+      order: (max._max.order ?? 0) + 1,
+      visibility,
+      publishAt,
+      countdownMessage,
+    },
     include: { _count: { select: { slides: true } } },
   })
   await auditLog('CREATE', 'MODULE', module.id, { title: module.title })

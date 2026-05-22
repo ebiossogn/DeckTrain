@@ -6,10 +6,12 @@ import type { ModuleWithCount } from '@/types/slides'
 export default async function AgendaAdminPage() {
   const [rawEvents, rawModules] = await Promise.all([
     prisma.agendaSession.findMany({
+      where: { isDeleted: false },
       orderBy: { startDate: 'asc' },
       include: { module: { select: { id: true, title: true } } },
     }),
     prisma.module.findMany({
+      where: { isDeleted: false },
       orderBy: { order: 'asc' },
       include: { _count: { select: { slides: true } } },
     }),
@@ -25,6 +27,7 @@ export default async function AgendaAdminPage() {
   const modules: ModuleWithCount[] = rawModules.map((m) => ({
     ...m,
     createdAt: m.createdAt.toISOString(),
+    publishAt: m.publishAt?.toISOString() ?? null,
   }))
 
   return <AgendaClient initialEvents={events} modules={modules} />

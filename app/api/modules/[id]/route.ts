@@ -6,11 +6,18 @@ import { auditLog } from '@/lib/audit'
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const err = await assertAuth()
   if (err) return err
-  const { title, description } = await req.json()
+  const body = await req.json()
+  const { title, description, visibility, publishAt, countdownMessage } = body
   if (!title?.trim()) return NextResponse.json({ error: 'Titre requis' }, { status: 400 })
   const module = await prisma.module.update({
     where: { id: params.id },
-    data: { title: title.trim(), description: description ?? null },
+    data: {
+      title: title.trim(),
+      description: description ?? null,
+      visibility: visibility ?? 'private',
+      publishAt: publishAt ? new Date(publishAt) : null,
+      countdownMessage: countdownMessage ?? null,
+    },
     include: { _count: { select: { slides: true } } },
   })
   await auditLog('UPDATE', 'MODULE', module.id, { title: module.title })
