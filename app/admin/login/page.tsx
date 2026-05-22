@@ -10,12 +10,14 @@ import {
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { useTranslations } from 'next-intl'
 
 function AdminLoginContent() {
   const searchParams = useSearchParams()
   const urlError = searchParams.get('error')
   const prefillEmail = searchParams.get('email') ?? ''
 
+  const t = useTranslations('auth')
   const [email, setEmail] = useState(prefillEmail)
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -60,7 +62,7 @@ function AdminLoginContent() {
           className="flex items-center gap-2 text-sm text-light-text/50 dark:text-dark-text/50 hover:text-accent transition-colors"
         >
           <ArrowLeft size={14} />
-          Retour à l'accueil
+          {t('back_home')}
         </Link>
       </motion.div>
 
@@ -82,8 +84,7 @@ function AdminLoginContent() {
           <div className="flex items-start gap-2 mb-6 px-3 py-2.5 rounded-xl bg-light-gold/8 dark:bg-or/8 border border-light-gold/20 dark:border-or/20">
             <Shield size={14} className="text-light-gold dark:text-or flex-shrink-0 mt-0.5" />
             <p className="text-xs text-light-gold dark:text-or leading-relaxed">
-              Accès réservé au personnel DeckTrain.<br />
-              Vos identifiants vous ont été fournis par votre administrateur.
+              {t('admin_notice')}
             </p>
           </div>
 
@@ -91,7 +92,7 @@ function AdminLoginContent() {
             Administration
           </h1>
           <p className="text-sm text-light-text-muted dark:text-text-secondary mb-6">
-            Connectez-vous à votre espace administrateur.
+            {t('admin_subtitle')}
           </p>
 
           <AnimatePresence>
@@ -103,14 +104,14 @@ function AdminLoginContent() {
                 className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm mb-5"
               >
                 <AlertCircle size={15} className="flex-shrink-0" />
-                La connexion Google n'est pas disponible pour les comptes administrateurs.
+                {t('admin_oauth_blocked')}
               </motion.div>
             )}
           </AnimatePresence>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Adresse email"
+              label={t('email')}
               type="email"
               placeholder="admin@decktrain.com"
               value={email}
@@ -122,7 +123,7 @@ function AdminLoginContent() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-light-text/70 dark:text-dark-text/70">
-                Mot de passe
+                {t('password')}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-text/40 dark:text-dark-text/40 pointer-events-none">
@@ -142,7 +143,7 @@ function AdminLoginContent() {
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text/40 dark:text-dark-text/40 hover:text-accent transition-colors"
                   tabIndex={-1}
-                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  aria-label={showPassword ? t('hide_password') : t('show_password')}
                 >
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
@@ -170,7 +171,7 @@ function AdminLoginContent() {
               loading={loading}
               className="w-full mt-2 py-3"
             >
-              Se connecter
+              {t('login_btn')}
             </LoadingButton>
           </form>
         </div>

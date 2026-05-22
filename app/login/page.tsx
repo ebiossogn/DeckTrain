@@ -11,10 +11,12 @@ import {
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { useTranslations } from 'next-intl'
 
 function LoginContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const t = useTranslations('auth')
   const verified = searchParams.get('verified') === '1'
   const tokenError = searchParams.get('error')
 
@@ -87,7 +89,7 @@ function LoginContent() {
           className="flex items-center gap-2 text-sm text-light-text/50 dark:text-dark-text/50 hover:text-accent transition-colors"
         >
           <ArrowLeft size={14} />
-          Retour à l'accueil
+          {t('back_home')}
         </Link>
       </motion.div>
 
@@ -132,10 +134,10 @@ function LoginContent() {
           </AnimatePresence>
 
           <h1 className="font-syne text-2xl font-bold text-light-text dark:text-dark-text mb-1">
-            Connexion
+            {t('login_title')}
           </h1>
           <p className="text-sm text-light-text/50 dark:text-dark-text/50 mb-6">
-            Accédez à votre espace DeckTrain
+            {t('login_subtitle')}
           </p>
 
           {/* Google OAuth */}
@@ -155,18 +157,18 @@ function LoginContent() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
             )}
-            Continuer avec Google
+            {t('google')}
           </button>
 
           <div className="flex items-center gap-3 mb-5">
             <div className="flex-1 h-px bg-light-text/10 dark:bg-dark-text/10" />
-            <span className="text-xs text-light-text/40 dark:text-dark-text/40">ou</span>
+            <span className="text-xs text-light-text/40 dark:text-dark-text/40">{t('or_continue')}</span>
             <div className="flex-1 h-px bg-light-text/10 dark:bg-dark-text/10" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Adresse email"
+              label={t('email')}
               type="email"
               placeholder="admin@decktrain.com"
               value={email}
@@ -179,7 +181,7 @@ function LoginContent() {
             {/* Mot de passe avec toggle visibilité */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-light-text/70 dark:text-dark-text/70">
-                Mot de passe
+                {t('password')}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-light-text/40 dark:text-dark-text/40 pointer-events-none">
@@ -199,7 +201,7 @@ function LoginContent() {
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text/40 dark:text-dark-text/40 hover:text-accent transition-colors"
                   tabIndex={-1}
-                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  aria-label={showPassword ? t('hide_password') : t('show_password')}
                 >
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
@@ -228,13 +230,13 @@ function LoginContent() {
               loading={loading}
               className="w-full mt-2 py-3"
             >
-              Se connecter
+              {t('login_btn')}
             </LoadingButton>
 
             <p className="text-center text-sm text-light-text/50 dark:text-dark-text/50">
-              Pas encore de compte ?{' '}
+              {t('no_account')}{' '}
               <Link href="/register" className="text-accent hover:underline">
-                S'inscrire
+                {t('register_link')}
               </Link>
             </p>
           </form>

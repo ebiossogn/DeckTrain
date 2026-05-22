@@ -9,6 +9,8 @@ import { AuthProvider } from '@/components/providers/session-provider'
 import { AccentProvider } from '@/components/providers/accent-provider'
 import { prisma } from '@/lib/prisma'
 import { InstallPWABanner } from '@/components/ui/install-pwa-banner'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages, getLocale } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'DeckTrain — La formation interactive pensée pour l\'Afrique',
@@ -28,28 +30,32 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await prisma.appSettings
-    .findUnique({ where: { id: 'singleton' } })
-    .catch(() => null)
+  const [settings, messages, locale] = await Promise.all([
+    prisma.appSettings.findUnique({ where: { id: 'singleton' } }).catch(() => null),
+    getMessages(),
+    getLocale(),
+  ])
 
   const accentColor = settings?.accentColor ?? '#00D4FF'
 
   return (
-    <html lang="fr" className="dark" suppressHydrationWarning>
+    <html lang={locale} className="dark" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <AuthProvider>
-          <ThemeProvider>
-            <AccentProvider accentColor={accentColor} />
-            {children}
-          </ThemeProvider>
-        </AuthProvider>
-        <InstallPWABanner />
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: { background: '#1C1C1C', border: '1px solid rgba(46,46,46,0.9)', color: '#CCCCCC' },
-          }}
-        />
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <AuthProvider>
+            <ThemeProvider>
+              <AccentProvider accentColor={accentColor} />
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
+          <InstallPWABanner />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: { background: '#1C1C1C', border: '1px solid rgba(46,46,46,0.9)', color: '#CCCCCC' },
+            }}
+          />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

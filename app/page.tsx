@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout/footer'
 import { Button } from '@/components/ui/button'
 import { PricingSection } from '@/components/landing/pricing-section'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -48,6 +49,9 @@ const testimonials = [
 ]
 
 export default function HomePage() {
+  const t = useTranslations('landing')
+  const tn = useTranslations('nav')
+
   return (
     <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors duration-300">
       <Navbar />
@@ -67,7 +71,7 @@ export default function HomePage() {
           <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible"
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/25 bg-accent/6 text-accent text-sm mb-10 label-dt">
             <Globe size={12} />
-            Conçu pour l'Afrique · Formation Tech
+            {t('badge')}
           </motion.div>
 
           {/* Logo display */}
@@ -80,32 +84,31 @@ export default function HomePage() {
           {/* Tagline */}
           <motion.p custom={2} variants={fadeUp} initial="hidden" animate="visible"
             className="font-display text-2xl md:text-3xl font-light text-light-text dark:text-white mb-3 max-w-2xl">
-            La formation interactive
-            <br className="hidden md:block" /> pensée pour l'Afrique
+            {t('hero_title')}
+            <br className="hidden md:block" /> {t('hero_subtitle')}
           </motion.p>
 
           <motion.p custom={3} variants={fadeUp} initial="hidden" animate="visible"
             className="text-sm font-sans text-light-gold dark:text-or mb-2 tracking-wide">
-            Slides · Exercices · Sondages · Agenda
+            Slides · {tn('exercises')} · {tn('surveys')} · {tn('agenda')}
           </motion.p>
 
           <motion.p custom={4} variants={fadeUp} initial="hidden" animate="visible"
             className="text-sm text-light-text-muted dark:text-text-secondary max-w-lg mx-auto mb-10 leading-relaxed">
-            Une alternative moderne à PowerPoint — interactive, sécurisée, adaptée aux
-            réalités du terrain pour les formateurs de Dakar à Kinshasa.
+            {t('hero_desc')}
           </motion.p>
 
           <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible"
             className="flex flex-wrap gap-4 justify-center">
             <Link href="/register">
               <Button size="lg" variant="primary" className="group">
-                Commencer maintenant
+                {t('cta_start')}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link href="/present">
               <Button size="lg" variant="secondary">
-                Voir la démo
+                {t('cta_demo')}
               </Button>
             </Link>
           </motion.div>
@@ -114,10 +117,10 @@ export default function HomePage() {
           <motion.div custom={6} variants={fadeUp} initial="hidden" animate="visible"
             className="flex flex-wrap gap-10 justify-center mt-16">
             {[
-              { v: '7',  l: 'Types de slides' },
-              { v: '10', l: 'Transitions' },
-              { v: '5',  l: 'Types de sondages' },
-              { v: '∞',  l: 'Participants' },
+              { v: '7',  l: t('stats_slides') },
+              { v: '10', l: t('stats_transitions') },
+              { v: '5',  l: t('stats_surveys') },
+              { v: '∞',  l: t('stats_participants') },
             ].map((s) => (
               <div key={s.l} className="text-center">
                 <div className="font-display font-light text-5xl text-light-gold dark:text-or mb-1">{s.v}</div>
@@ -132,7 +135,7 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               className="text-center mb-14">
-              <p className="label-dt text-light-text-muted dark:text-text-secondary mb-3">Pourquoi DeckTrain ?</p>
+              <p className="label-dt text-light-text-muted dark:text-text-secondary mb-3">{t('why_title')}</p>
               <h2 className="font-display text-3xl font-light text-light-text dark:text-white">6 bonnes raisons de changer</h2>
             </motion.div>
 
@@ -159,7 +162,7 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="text-center mb-14">
             <p className="label-dt text-light-text-muted dark:text-text-secondary mb-3">Fonctionnalités</p>
-            <h2 className="font-display text-3xl font-light text-light-text dark:text-white mb-3">Tout ce dont vous avez besoin</h2>
+            <h2 className="font-display text-3xl font-light text-light-text dark:text-white mb-3">{t('features_title')}</h2>
             <p className="text-sm text-light-text-muted dark:text-text-secondary max-w-lg mx-auto">
               Une plateforme complète pour créer, animer et évaluer vos formations techniques.
             </p>
@@ -226,16 +229,16 @@ export default function HomePage() {
               <Zap size={26} />
             </div>
             <h2 className="font-display text-3xl font-light text-light-text dark:text-white mb-3">
-              Prêt à transformer vos formations ?
+              {t('cta_section_title')}
             </h2>
             <p className="font-display text-lg text-light-gold dark:text-or mb-2">DeckTrain — Fait pour l'Afrique, par l'Afrique.</p>
             <p className="text-sm text-light-text-muted dark:text-text-secondary mb-8">
-              Rejoignez les formateurs africains qui ont déjà adopté DeckTrain.
+              {t('cta_section_desc')}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/register">
                 <Button size="lg" variant="primary" className="shadow-[0_0_20px_rgba(0,212,255,0.25)]">
-                  Commencer maintenant
+                  {t('cta_free')}
                   <ArrowRight size={16} />
                 </Button>
               </Link>

@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "modules": "Modules",
+    "exercises": "Exercises",
+    "agenda": "Agenda",
+    "surveys": "Surveys",
+    "login": "Sign in",
+    "register": "Create account",
+    "present": "Demo"
+  },
+  "landing": {
+    "badge": "Built for Africa · Tech Training",
+    "hero_title": "Interactive training,",
+    "hero_subtitle": "built for Africa",
+    "hero_desc": "A modern alternative to PowerPoint — interactive, secure, and tailored for trainers from Dakar to Kinshasa.",
+    "cta_start": "Get started",
+    "cta_demo": "View demo",
+    "stats_slides": "Slide types",
+    "stats_transitions": "Transitions",
+    "stats_surveys": "Survey types",
+    "stats_participants": "Participants",
+    "why_title": "Why DeckTrain?",
+    "features_title": "Everything you need",
+    "cta_section_title": "Ready to transform your training?",
+    "cta_section_desc": "Join trainers who trust DeckTrain for their interactive sessions.",
+    "cta_free": "Start for free"
+  },
+  "auth": {
+    "email": "Email address",
+    "password": "Password",
+    "login_title": "Sign in",
+    "login_subtitle": "Access your trainer workspace",
+    "login_btn": "Sign in",
+    "register_title": "Create account",
+    "register_subtitle": "Join the DeckTrain platform",
+    "register_btn": "Create my account",
+    "name": "Full name",
+    "forgot_password": "Forgot password?",
+    "no_account": "Don't have an account?",
+    "register_link": "Sign up",
+    "has_account": "Already have an account?",
+    "or_continue": "or continue with",
+    "google": "Continue with Google",
+    "back_home": "Back to home",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "admin_subtitle": "Sign in to your admin workspace.",
+    "admin_notice": "Access restricted to DeckTrain staff. Your credentials were provided by your administrator.",
+    "admin_oauth_blocked": "Google sign-in is not available for administrator accounts."
+  }
+}

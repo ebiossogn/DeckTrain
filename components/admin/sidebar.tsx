@@ -30,6 +30,7 @@ import type { AdminRole } from '@/types/roles'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { NotificationBell } from '@/components/admin/notification-bell'
 import { SearchModal } from '@/components/ui/search-modal'
+import { LanguageSwitcher } from '@/components/ui/language-switcher'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -194,9 +195,10 @@ export function AdminSidebar({ userEmail, userRole }: AdminSidebarProps) {
 
         {/* Bas : thème + user + logout */}
         <div className="px-3 py-4 border-t border-light-border dark:border-dark-border space-y-2">
-          {/* Toggle thème */}
-          <div className="flex items-center gap-3 px-3 py-1">
-            <span className="text-[10px] text-light-text-muted dark:text-text-secondary flex-1 label-dt">Thème</span>
+          {/* Toggle thème + langue */}
+          <div className="flex items-center gap-2 px-3 py-1">
+            <span className="text-[10px] text-light-text-muted dark:text-text-secondary flex-1 label-dt">Interface</span>
+            <LanguageSwitcher compact />
             <ThemeToggle />
           </div>
 

@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "modules": "Modules",
+    "exercises": "Exercices",
+    "agenda": "Agenda",
+    "surveys": "Sondages",
+    "login": "Connexion",
+    "register": "Créer un compte",
+    "present": "Démo"
+  },
+  "landing": {
+    "badge": "Conçu pour l'Afrique · Formation Tech",
+    "hero_title": "La formation interactive",
+    "hero_subtitle": "pensée pour l'Afrique",
+    "hero_desc": "Une alternative moderne à PowerPoint — interactive, sécurisée, adaptée aux réalités du terrain pour les formateurs de Dakar à Kinshasa.",
+    "cta_start": "Commencer maintenant",
+    "cta_demo": "Voir la démo",
+    "stats_slides": "Types de slides",
+    "stats_transitions": "Transitions",
+    "stats_surveys": "Types de sondages",
+    "stats_participants": "Participants",
+    "why_title": "Pourquoi DeckTrain ?",
+    "features_title": "Tout ce dont vous avez besoin",
+    "cta_section_title": "Prêt à transformer vos formations ?",
+    "cta_section_desc": "Rejoignez les formateurs qui font confiance à DeckTrain pour leurs sessions interactives.",
+    "cta_free": "Commencer gratuitement"
+  },
+  "auth": {
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "login_title": "Connexion",
+    "login_subtitle": "Accédez à votre espace formateur",
+    "login_btn": "Se connecter",
+    "register_title": "Créer un compte",
+    "register_subtitle": "Rejoignez la plateforme DeckTrain",
+    "register_btn": "Créer mon compte",
+    "name": "Nom complet",
+    "forgot_password": "Mot de passe oublié ?",
+    "no_account": "Pas encore de compte ?",
+    "register_link": "S'inscrire",
+    "has_account": "Déjà un compte ?",
+    "or_continue": "ou continuer avec",
+    "google": "Continuer avec Google",
+    "back_home": "Retour à l'accueil",
+    "show_password": "Afficher le mot de passe",
+    "hide_password": "Masquer le mot de passe",
+    "admin_subtitle": "Connectez-vous à votre espace administrateur.",
+    "admin_notice": "Accès réservé au personnel DeckTrain. Vos identifiants vous ont été fournis par votre administrateur.",
+    "admin_oauth_blocked": "La connexion Google n'est pas disponible pour les comptes administrateurs."
+  }
+}
